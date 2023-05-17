@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33627.172
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intelligent resume analysis system", "Intelligent resume analysis system.csproj", "{B13690DC-3E0B-4444-80A2-CC2B7B78FEBA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B13690DC-3E0B-4444-80A2-CC2B7B78FEBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B13690DC-3E0B-4444-80A2-CC2B7B78FEBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B13690DC-3E0B-4444-80A2-CC2B7B78FEBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B13690DC-3E0B-4444-80A2-CC2B7B78FEBA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {46E2B60C-937D-47AD-9B0E-E0190048143F}
+	EndGlobalSection
+EndGlobal
