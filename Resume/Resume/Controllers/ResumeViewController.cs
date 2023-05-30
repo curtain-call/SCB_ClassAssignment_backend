@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Resume.ResultModels;
-using Resume.WebSentModels;
+using ResumeSystem.ResultModels;
+using ResumeSystem.Class;
 using System.Security.Cryptography;
 using System.Threading.Tasks.Dataflow;
+using Microsoft.EntityFrameworkCore;
 
-namespace Resume.Controllers
+namespace ResumeSystem.Controllers
 {
     /// <summary>
     /// 这个类是，主页的类
@@ -14,34 +15,41 @@ namespace Resume.Controllers
     [ApiController]
     public class ResumeViewController : ControllerBase
     {
+        private readonly MyDbContext _context;
+
+        public ResumeViewController(MyDbContext context)
+        {
+            _context = context;
+        }
         /// <summary>
         /// 此时从主界面切换到简历界面 返回 该用户上传的所有的简历的ID(不显示)+人名+申请岗位+综合分
         /// </summary>
         /// <param name="CompanyId"></param>
         /// <returns></returns>
         [HttpGet]
-        public IEnumerable<ResumeInfo> MainViewToResume(int CompanyId)
+        public IEnumerable<ResumeDTO> MainViewToResume(int CompanyId)
         {
             //通过这个来标识，我的用户是哪个
             //调用接口 访问数据库 返回所有CompanyId的值，所对应的信息
             //MainViewToResumeModelClass SearchByCompanyId(int CompanyId)
-
-            //用来测试返回
+            var resumes = _context.SearchByCompanyId(CompanyId);
+            return resumes;
+/*            //用来测试返回
             MainViewToResumeModelClass mainViewToResumeModelClass = new MainViewToResumeModelClass();
-            ResumeInfo resumeInfo1 = new ResumeInfo();
-            resumeInfo1.AppliCantName = "lihua";
-            resumeInfo1.ResumeId = CompanyId;
-            resumeInfo1.JobPosition = "baizi";
-            resumeInfo1.AllScore = 80;
-            ResumeInfo resumeInfo2 = new ResumeInfo();
-            resumeInfo2.AppliCantName = "xiaoming";
-            resumeInfo2.ResumeId = CompanyId+1;
-            resumeInfo2.JobPosition = "baizige";
-            resumeInfo2.AllScore = 90;
-            mainViewToResumeModelClass.ResumesInfo.Add(resumeInfo1);
-            mainViewToResumeModelClass.ResumesInfo.Add(resumeInfo2);
+            Resume Resume1 = new Resume();
+            Resume1.AppliCantName = "lihua";
+            Resume1.ResumeId = CompanyId;
+            Resume1.JobPosition = "baizi";
+            Resume1.AllScore = 80;
+            Resume Resume2 = new Resume();
+            Resume2.AppliCantName = "xiaoming";
+            Resume2.ResumeId = CompanyId+1;
+            Resume2.JobPosition = "baizige";
+            Resume2.AllScore = 90;
+            mainViewToResumeModelClass.ResumesInfo.Add(Resume1);
+            mainViewToResumeModelClass.ResumesInfo.Add(Resume2);
             mainViewToResumeModelClass.Test = 0;
-            return mainViewToResumeModelClass.ResumesInfo;
+            return mainViewToResumeModelClass.ResumesInfo;*/
         }
 
 
@@ -56,12 +64,8 @@ namespace Resume.Controllers
         {
             //调用接口获得，所该单简历的所有信息
             //传入：resumeId 返回：SingleResumeModelClass
-
-           
-            SingleResumeModelClass singleResumeModelClass = new SingleResumeModelClass();
-            singleResumeModelClass.Age= 1;
+            var singleResumeModelClass = _context.GetResumeById(resumeId);
             return singleResumeModelClass;
-
         }
 
 

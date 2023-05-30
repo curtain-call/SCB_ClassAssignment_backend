@@ -1,4 +1,4 @@
-﻿namespace Resume
+﻿namespace ResumeSystem
 {
     public class Job
     {

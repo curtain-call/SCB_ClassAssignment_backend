@@ -1,4 +1,4 @@
-﻿namespace Resume.ResultModels
+﻿namespace ResumeSystem.ResultModels
 {
     /// <summary>
     /// 当点击单一简历时，返回的类

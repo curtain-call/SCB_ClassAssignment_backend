@@ -1,4 +1,4 @@
-﻿namespace Resume.Models
+﻿namespace ResumeSystem.Models
 {
     /// <summary>
     /// 登录界面 前端传来数据后，此时查找数据库，返回的结果

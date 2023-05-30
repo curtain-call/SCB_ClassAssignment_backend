@@ -1,11 +1,11 @@
 ﻿using Resume;
 using System.Numerics;
 
-namespace Resume.ResultModels
+namespace ResumeSystem.ResultModels
 {
     public class MainViewToResumeModelClass
     {
-        public List<ResumeInfo> ResumesInfo=new List<ResumeInfo>();
+        public List<Resume> ResumesInfo=new List<Resume>();
         public int Test;
     }
 

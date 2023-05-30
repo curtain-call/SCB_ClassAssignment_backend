@@ -1,4 +1,4 @@
-﻿namespace Resume.ResultModels
+﻿namespace ResumeSystem.ResultModels
 {
     public class SecondAddResumeModelClass
     {

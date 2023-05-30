@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Resume.ResultModels;
+using ResumeSystem.ResultModels;
 
-namespace Resume.Controllers
+namespace ResumeSystem.Controllers
 {
     /// <summary>
     /// 这个类，主要赋值的是，与前端的岗位信息进行交互

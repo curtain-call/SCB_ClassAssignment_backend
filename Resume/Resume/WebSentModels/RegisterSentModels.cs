@@ -1,4 +1,4 @@
-﻿namespace Resume.WebSentModels
+﻿namespace ResumeSystem.WebSentModels
 {
     /// <summary>
     /// 注册时，前端需要传输过来的信号

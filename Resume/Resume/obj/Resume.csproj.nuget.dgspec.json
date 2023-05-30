@@ -1,20 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\86178\\Desktop\\大学本科学习资料\\大二下\\软件构造基础\\大作业\\Resume\\Resume\\Resume.csproj": {}
+    "D:\\武大 负责项目\\中国软件杯\\SCB_ClassAssignment_backend\\Resume\\Resume\\Resume.csproj": {}
   },
   "projects": {
-    "C:\\Users\\86178\\Desktop\\大学本科学习资料\\大二下\\软件构造基础\\大作业\\Resume\\Resume\\Resume.csproj": {
+    "D:\\武大 负责项目\\中国软件杯\\SCB_ClassAssignment_backend\\Resume\\Resume\\Resume.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\86178\\Desktop\\大学本科学习资料\\大二下\\软件构造基础\\大作业\\Resume\\Resume\\Resume.csproj",
+        "projectUniqueName": "D:\\武大 负责项目\\中国软件杯\\SCB_ClassAssignment_backend\\Resume\\Resume\\Resume.csproj",
         "projectName": "Resume",
-        "projectPath": "C:\\Users\\86178\\Desktop\\大学本科学习资料\\大二下\\软件构造基础\\大作业\\Resume\\Resume\\Resume.csproj",
-        "packagesPath": "C:\\Users\\86178\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\86178\\Desktop\\大学本科学习资料\\大二下\\软件构造基础\\大作业\\Resume\\Resume\\obj\\",
+        "projectPath": "D:\\武大 负责项目\\中国软件杯\\SCB_ClassAssignment_backend\\Resume\\Resume\\Resume.csproj",
+        "packagesPath": "C:\\Users\\Liwen Yang\\.nuget\\packages\\",
+        "outputPath": "D:\\武大 负责项目\\中国软件杯\\SCB_ClassAssignment_backend\\Resume\\Resume\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\86178\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Liwen Yang\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -41,9 +45,13 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[7.0.5, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
-              "version": "[6.2.3, )"
+              "version": "[6.5.0, )"
             }
           },
           "imports": [

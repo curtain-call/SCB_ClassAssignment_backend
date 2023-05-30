@@ -1,4 +1,4 @@
-﻿namespace Resume.Models
+﻿namespace ResumeSystem.Models
 {
     /// <summary>
     /// 用以注册账号时，返回信息所用
