@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="新文件夹\**" />
+    <Content Remove="新文件夹\**" />
+    <EmbeddedResource Remove="新文件夹\**" />
+    <None Remove="新文件夹\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="FirstAddResumeModelClass.cs" />
+    <Compile Remove="LoginModelClass.cs" />
+    <Compile Remove="MainToJobModelClass.cs" />
+    <Compile Remove="MainViewToResumeModelClass.cs" />
+    <Compile Remove="RegisterModelClass.cs" />
+    <Compile Remove="SecondAddResumeModelClass.cs" />
+    <Compile Remove="SingleResumeModelClass.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
+    <PackageReference Include="MySql.EntityFrameworkCore" Version="7.0.2" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resumes\" />
+    <Folder Include="Resumes\2023\5\26\" />
+  </ItemGroup>
+
+</Project>
