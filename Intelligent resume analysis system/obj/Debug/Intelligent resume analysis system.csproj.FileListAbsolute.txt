@@ -1,3 +1,0 @@
-D:\武大 负责项目\中国软件杯\SCB_ClassAssignment_backend\code frame\Intelligent resume analysis system\obj\Debug\Intelligent resume analysis system.csproj.AssemblyReference.cache
-D:\武大 负责项目\中国软件杯\SCB_ClassAssignment_backend\code frame\Intelligent resume analysis system\obj\Debug\Intelligent resume analysis system.csproj.SuggestedBindingRedirects.cache
-D:\武大 负责项目\中国软件杯\SCB_ClassAssignment_backend\code frame\Intelligent resume analysis system\obj\Debug\Intelligent resume analysis system.csproj.CoreCompileInputs.cache
