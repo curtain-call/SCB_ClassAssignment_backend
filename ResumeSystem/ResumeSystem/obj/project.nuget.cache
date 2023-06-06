@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ODN+BPSLC6otilmNERsHw/rNeaDbwbbTOeViAmmmZP6dNCX5bH3HEMe5prtfJP/Lt/qR+NrBFgq8Pfy0+Iu0rQ==",
+  "dgSpecHash": "S8xtU1gPqZnvxbDWaKnhyDKiEjhupCpCiPWqPXvCPINz88y4CF4G1uxSrYdL1iDM6yhxeV75ckyqZk/OuGj1Pw==",
   "success": true,
-  "projectFilePath": "D:\\武大 负责项目\\中国软件杯\\SCB_ClassAssignment_backend\\Resume\\Resume\\Intelligent resume analysis system.csproj",
+  "projectFilePath": "D:\\武大 负责项目\\中国软件杯\\SCB_ClassAssignment_backend\\ResumeSystem\\ResumeSystem\\Intelligent resume analysis system.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Liwen Yang\\.nuget\\packages\\google.protobuf\\3.21.9\\google.protobuf.3.21.9.nupkg.sha512",
     "C:\\Users\\Liwen Yang\\.nuget\\packages\\k4os.compression.lz4\\1.3.5\\k4os.compression.lz4.1.3.5.nupkg.sha512",

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ResumeSystem.Models;
+using ResumeSystem.Services;
 using ResumeSystem.WebSentModels;
 namespace ResumeSystem.Controllers
 {
@@ -8,49 +10,27 @@ namespace ResumeSystem.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
-
         /// <summary>
-        /// 获取的是 前端传入的登录信息 返回是否登录成功的信号
+        /// 登录界面 前端发送过来账号和密码 后端返回一些值（判断登录是否成功）
         /// </summary>
-        /// <param name="account"></param>
-        /// <param name="password"></param>
+        /// <param name="login"></param>
         /// <returns></returns>
-
-        private readonly MyDbContext _context;
-
-        public LoginController(MyDbContext context)
+        private readonly CompanyService _companyService;
+        public LoginController(CompanyService companyService)
         {
-            _context = context;
+            _companyService = companyService;
         }
-
         [HttpPost]
         [Route("Login")]
-        public LoginModelClass Login(string account , string password)
-        {
-            //接下来调用函数  isLogin(string account,string password)(此时需要查数据库,返回值为LoginModelClass)
-            var model = _context.IsLogin(account, password);
-            return model;
+        public LoginResultModel  Login(LoginSentModel login) { 
+            string password=login.Password;
+            string userName=login.UserName;
+            //调用接口 查看数据库 看登录是否成功
+            //传入 ：password userName 
+            // 返回类LoginResultModel ,具体赋值 详见LoginResultModel类
+            var result = _companyService.IsLogin(userName, password);
+            if (result.Code == 20000) { result.Data = "admin-token"; }
+            return result;
         }
-
-        /// <summary>
-        /// 实现的是 获取前端传入的注册信息。返回是否注册成功的信号
-        /// </summary>
-        /// <param name="register"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("register")]
-        public RegisterModelClass Register(RegisterSentModels register)
-        {
-            //此时需要调用后台端 然后进行数据库匹配（看账号是否已经存在）
-            //接口 RegisterModelClass CreateNewAccount(RegisterSentModels register) 
-            var model = _context.CreateNewAccount(register);
-            return model;
-/*            //后面这个是，模拟能否将信息全部传输成功
-            RegisterModelClass model = new RegisterModelClass();
-            model.Msg ="name:"+ register.Name+";Email:"+register.Email+"; Account:"+register.Account+"; PassWord:"+register.Password;
-            model.IsSuccess = true;
-            return model;*/
-        }
-
     }
 }

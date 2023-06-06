@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ResumeSystem.Class; // 替换为你的数据模型类的命名空间
-using ResumeSystem.Models;
+using ResumeSystem.Models; // 替换为你的数据模型类的命名空间
 using ResumeSystem.ResultModels;
 using ResumeSystem.WebSentModels;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
@@ -9,6 +8,7 @@ public class MyDbContext : DbContext
 {
     public MyDbContext(DbContextOptions<MyDbContext> options) : base(options)
     {
+        this.Database.EnsureCreated();
     }
 
     public DbSet<Applicant> Applicants { get; set; }
@@ -16,6 +16,9 @@ public class MyDbContext : DbContext
     public DbSet<JobPosition> JobPositions { get; set; }
     public DbSet<Company> Companies { get; set; }
     public DbSet<Resume> Resumes { get; set; }
+    public DbSet<WorkExperiences> WorkExperience { get; set; }
+    public DbSet<Award> Awards { get; set; }
+    public DbSet<SkillCertificate> SkillCertificates { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -39,6 +42,12 @@ public class MyDbContext : DbContext
         modelBuilder.Entity<Resume>()
             .HasKey(r => r.ID); // 设置主键
 
+        modelBuilder.Entity<WorkExperiences>()
+            .HasKey(w => w.Id);
+
+        modelBuilder.Entity<Award>()
+            .HasKey(a => a.ID);
+
         modelBuilder.Entity<Resume>()
             .HasOne(r => r.Applicant) // 设置一对一关系
             .WithOne(a => a.Resume)
@@ -59,6 +68,26 @@ public class MyDbContext : DbContext
             .WithOne(r => r.Applicant)
             .HasForeignKey<Resume>(r => r.ApplicantID);
 
+        modelBuilder.Entity<Applicant>()
+            .HasMany(a => a.Awards)
+            .WithOne(aw => aw.Applicant)
+            .HasForeignKey(aw => aw.ApplicantID);
+
+        modelBuilder.Entity<Applicant>()
+            .HasMany(a => a.WorkExperiences)
+            .WithOne(wo => wo.Applicant)
+            .HasForeignKey(wo => wo.ApplicantID);
+
+        modelBuilder.Entity<Applicant>()
+            .HasMany(a => a.SkillCertificates)
+            .WithOne(sk => sk.Applicant)
+            .HasForeignKey(sk => sk.ApplicantID);
+
+        modelBuilder.Entity<Applicant>()
+            .HasMany(a => a.EducationBackgrounds)
+            .WithOne(ed => ed.Applicant)
+            .HasForeignKey(ed => ed.ApplicantID);
+
         modelBuilder.Entity<Company>()
             .HasMany(c => c.JobPositions)
             .WithOne(jp => jp.Company)
@@ -68,15 +97,6 @@ public class MyDbContext : DbContext
             .HasMany(c => c.Resumes)
             .WithOne(r => r.Company)
             .HasForeignKey(r => r.CompanyID);
-    }
-
-    public LoginModelClass IsLogin(string account, string password)
-    {
-        var company = Companies.FirstOrDefault(c => c.Account == account && c.Password == password);
-
-        var model = new LoginModelClass();
-        model.IsLogin = company != null;
-        return model;
     }
 
     public RegisterModelClass CreateNewAccount(RegisterSentModels register)
@@ -119,7 +139,7 @@ public class MyDbContext : DbContext
                                  ResumeId = r.ID,
                                  ApplicantName = r.Applicant.Name,
                                  JobPosition = r.JobPosition.Title,
-                                 OverallScore = r.Applicant.ApplicantProfile.MatchingScore
+                                 MatchingScore = r.Applicant.ApplicantProfile.MatchingScore
                              })
                              .ToList();
         return resumes;
@@ -145,7 +165,6 @@ public class MyDbContext : DbContext
             JobPosition = resume.JobPosition.Title,
             Gender = resume.Applicant.Gender,
             HighestEducation = resume.Applicant.HighestEducation,
-            WorkExperience = resume.Applicant.WorkExperience,
             MatchingScore = resume.Applicant.ApplicantProfile.MatchingScore,
             TalentTraits = resume.Applicant.ApplicantProfile.TalentTraits
         };
@@ -164,7 +183,7 @@ public class MyDbContext : DbContext
         return resume.ID;
     }
 
-    public SecondAddResumeModelClass UpdateResume(FirstAddResumeModelClass first)
+    /*public SecondAddResumeModelClass UpdateResume(FirstAddResumeModelClass first)
     {
         // 查找是否已经存在相同的简历
         var existingResume = Resumes
@@ -185,7 +204,7 @@ public class MyDbContext : DbContext
             existingResume.Applicant.WorkExperience = first.WorkExperience;
             existingResume.Applicant.TotalWorkYears = first.TotalWorkYears;
             existingResume.Applicant.SelfEvaluation = first.SelfEvaluation;
-            existingResume.Applicant.SkillCertificate = first.SkillCertificate;
+            existingResume.Applicant.SkillCertificates = first.SkillCertificate;
             // 其他需要更新的字段...
 
             SaveChanges();
@@ -197,7 +216,7 @@ public class MyDbContext : DbContext
         {
             return new SecondAddResumeModelClass { AddSuccess = false, ErrorMessage = "Resume not found." };
         }
-    }
+    }*/
     //获取公司的所有职位名称和第一个职位的要求。
     public List<string> GetJobNames(int companyId)
     {

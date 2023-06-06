@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\武大 负责项目\\中国软件杯\\SCB_ClassAssignment_backend\\Resume\\Resume\\Intelligent resume analysis system.csproj": {}
+    "D:\\武大 负责项目\\中国软件杯\\SCB_ClassAssignment_backend\\ResumeSystem\\ResumeSystem\\Intelligent resume analysis system.csproj": {}
   },
   "projects": {
-    "D:\\武大 负责项目\\中国软件杯\\SCB_ClassAssignment_backend\\Resume\\Resume\\Intelligent resume analysis system.csproj": {
+    "D:\\武大 负责项目\\中国软件杯\\SCB_ClassAssignment_backend\\ResumeSystem\\ResumeSystem\\Intelligent resume analysis system.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\武大 负责项目\\中国软件杯\\SCB_ClassAssignment_backend\\Resume\\Resume\\Intelligent resume analysis system.csproj",
+        "projectUniqueName": "D:\\武大 负责项目\\中国软件杯\\SCB_ClassAssignment_backend\\ResumeSystem\\ResumeSystem\\Intelligent resume analysis system.csproj",
         "projectName": "Intelligent resume analysis system",
-        "projectPath": "D:\\武大 负责项目\\中国软件杯\\SCB_ClassAssignment_backend\\Resume\\Resume\\Intelligent resume analysis system.csproj",
+        "projectPath": "D:\\武大 负责项目\\中国软件杯\\SCB_ClassAssignment_backend\\ResumeSystem\\ResumeSystem\\Intelligent resume analysis system.csproj",
         "packagesPath": "C:\\Users\\Liwen Yang\\.nuget\\packages\\",
-        "outputPath": "D:\\武大 负责项目\\中国软件杯\\SCB_ClassAssignment_backend\\Resume\\Resume\\obj\\",
+        "outputPath": "D:\\武大 负责项目\\中国软件杯\\SCB_ClassAssignment_backend\\ResumeSystem\\ResumeSystem\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

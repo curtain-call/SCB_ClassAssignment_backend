@@ -224,19 +224,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\86178\\.nuget\\packages\\": {}
+    "C:\\Users\\Liwen Yang\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\86178\\Desktop\\大学本科学习资料\\大二下\\软件构造基础\\大作业\\resume2_0\\resume2_0\\resume2_0.csproj",
+      "projectUniqueName": "D:\\武大 负责项目\\中国软件杯\\SCB_ClassAssignment_backend\\resume2_0\\resume2_0\\resume2_0.csproj",
       "projectName": "resume2_0",
-      "projectPath": "C:\\Users\\86178\\Desktop\\大学本科学习资料\\大二下\\软件构造基础\\大作业\\resume2_0\\resume2_0\\resume2_0.csproj",
-      "packagesPath": "C:\\Users\\86178\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\86178\\Desktop\\大学本科学习资料\\大二下\\软件构造基础\\大作业\\resume2_0\\resume2_0\\obj\\",
+      "projectPath": "D:\\武大 负责项目\\中国软件杯\\SCB_ClassAssignment_backend\\resume2_0\\resume2_0\\resume2_0.csproj",
+      "packagesPath": "C:\\Users\\Liwen Yang\\.nuget\\packages\\",
+      "outputPath": "D:\\武大 负责项目\\中国软件杯\\SCB_ClassAssignment_backend\\resume2_0\\resume2_0\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\86178\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Liwen Yang\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [

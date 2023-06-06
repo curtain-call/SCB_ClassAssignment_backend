@@ -11,6 +11,7 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("c9eb4e45-b1b7-4469-a7b3-0e02645597a0")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("Intelligent resume analysis system")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]

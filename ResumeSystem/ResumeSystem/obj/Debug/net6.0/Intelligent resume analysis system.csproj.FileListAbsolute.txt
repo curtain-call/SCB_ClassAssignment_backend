@@ -69,3 +69,13 @@ D:\武大 负责项目\中国软件杯\SCB_ClassAssignment_backend\Resume\Resume
 D:\武大 负责项目\中国软件杯\SCB_ClassAssignment_backend\Resume\Resume\obj\Debug\net6.0\Intelligent resume analysis system.pdb
 D:\武大 负责项目\中国软件杯\SCB_ClassAssignment_backend\Resume\Resume\obj\Debug\net6.0\Intelligent resume analysis system.genruntimeconfig.cache
 D:\武大 负责项目\中国软件杯\SCB_ClassAssignment_backend\Resume\Resume\obj\Debug\net6.0\ref\Intelligent resume analysis system.dll
+D:\武大 负责项目\中国软件杯\SCB_ClassAssignment_backend\ResumeSystem\ResumeSystem\obj\Debug\net6.0\Intelligent resume analysis system.csproj.AssemblyReference.cache
+D:\武大 负责项目\中国软件杯\SCB_ClassAssignment_backend\ResumeSystem\ResumeSystem\obj\Debug\net6.0\Intelligent resume analysis system.GeneratedMSBuildEditorConfig.editorconfig
+D:\武大 负责项目\中国软件杯\SCB_ClassAssignment_backend\ResumeSystem\ResumeSystem\obj\Debug\net6.0\Intelligent resume analysis system.AssemblyInfoInputs.cache
+D:\武大 负责项目\中国软件杯\SCB_ClassAssignment_backend\ResumeSystem\ResumeSystem\obj\Debug\net6.0\Intelligent resume analysis system.AssemblyInfo.cs
+D:\武大 负责项目\中国软件杯\SCB_ClassAssignment_backend\ResumeSystem\ResumeSystem\obj\Debug\net6.0\Intelligent resume analysis system.csproj.CoreCompileInputs.cache
+D:\武大 负责项目\中国软件杯\SCB_ClassAssignment_backend\ResumeSystem\ResumeSystem\obj\Debug\net6.0\Intelligent resume analysis system.MvcApplicationPartsAssemblyInfo.cs
+D:\武大 负责项目\中国软件杯\SCB_ClassAssignment_backend\ResumeSystem\ResumeSystem\obj\Debug\net6.0\Intelligent resume analysis system.MvcApplicationPartsAssemblyInfo.cache
+D:\武大 负责项目\中国软件杯\SCB_ClassAssignment_backend\ResumeSystem\ResumeSystem\obj\Debug\net6.0\Intelligent resume analysis system.dll
+D:\武大 负责项目\中国软件杯\SCB_ClassAssignment_backend\ResumeSystem\ResumeSystem\obj\Debug\net6.0\refint\Intelligent resume analysis system.dll
+D:\武大 负责项目\中国软件杯\SCB_ClassAssignment_backend\ResumeSystem\ResumeSystem\obj\Debug\net6.0\Intelligent resume analysis system.pdb
