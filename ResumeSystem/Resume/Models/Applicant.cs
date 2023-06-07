@@ -3,16 +3,16 @@
     public class Applicant
     {
         public int ID { get; set; }
-        public string Name { get; set; }
-        public string Email { get; set; }  //个人邮箱
-        public string PhoneNumber { get; set; }  //手机号
+        public string? Name { get; set; }
+        public string? Email { get; set; }  //个人邮箱
+        public string? PhoneNumber { get; set; }  //手机号
         public int Age { get; set; }
-        public string Gender { get; set; }
-        public string JobIntention { get; set; } // 求职意向岗位
-        public string HighestEducation { get; set; } // 最高学历
-        public string Major { get; set; } //专业
-        public string GraduatedFrom { get; set; } // 毕业院校     
-        public string SelfEvaluation { get; set; } // 自我评价        
+        public string? Gender { get; set; }
+        public string? JobIntention { get; set; } // 求职意向岗位
+        public string? HighestEducation { get; set; } // 最高学历
+        public string? Major { get; set; } //专业
+        public string? GraduatedFrom { get; set; } // 毕业院校     
+        public string? SelfEvaluation { get; set; } // 自我评价        
         public int TotalWorkYears { get; set; } // 工作总时间
 
         // 导航属性

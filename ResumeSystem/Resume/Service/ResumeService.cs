@@ -45,20 +45,20 @@ namespace ResumeSystem.Service
                 Gender = resume.Applicant.Gender,
                 SelfEvaluation = resume.Applicant.SelfEvaluation,
                 HighestEducation = resume.Applicant.HighestEducation,
-                TalentTraits = resume.Applicant.ApplicantProfile.TalentTraits,
-                Awards = resume.Applicant.Awards.ToList(),  // assign Awards
+                //TalentTraits = resume.Applicant.ApplicantProfile.TalentTraits,
+                Awards = resume.Applicant.Awards.Select(a => new AwardInfo { AwardName = a.AwardName }).ToList(), // assign Awards
                 WorkExperience = resume.Applicant.WorkExperiences.ToList(),  // assign WorkExperiences
                 SkillCertificate = resume.Applicant.SkillCertificates.ToList(),  // assign SkillCertificates
-                WorkStability = resume.ApplicantProfile.WorkStability,
-                WorkStabilityReason = resume.ApplicantProfile.StabilityReason,
-                MatchingScore = resume.ApplicantProfile.MatchingScore,
-                MatchingReason = resume.ApplicantProfile.MatchingReason,
+                WorkStability = resume.Applicant.ApplicantProfile.WorkStability,
+                WorkStabilityReason = resume.Applicant.ApplicantProfile.StabilityReason,
+                MatchingScore = resume.Applicant.ApplicantProfile.MatchingScore,
+                MatchingReason = resume.Applicant.ApplicantProfile.MatchingReason,
             };
 
             return detailedResume;
         }
 
-        public void UpdateFilePath(string filePath, int resumeID)
+        /*public void UpdateFilePath(string filePath, int resumeID)
         {
             var existingResume = _dbContext.Resumes
             .FirstOrDefault(r => r.ID == resumeID);
@@ -68,6 +68,21 @@ namespace ResumeSystem.Service
                 existingResume.FilePath = filePath;
                 _dbContext.SaveChanges();
             }
+        }*/
+
+        public int AddResumePath(string filePath, Applicant applicantResult)
+        {
+            var resume = new Resume
+            {
+                FilePath = filePath,
+                ApplicantID = applicantResult.ID,
+                CompanyID = 1,
+                JobPositionID = 1,
+                Applicant = applicantResult,
+            };
+            _dbContext.Resumes.Add(resume);
+            _dbContext.SaveChanges();
+            return resume.ID;
         }
 
         public string GetFilePathById(int resumeID)

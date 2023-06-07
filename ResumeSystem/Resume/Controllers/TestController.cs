@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using ResumeSystem.Models;
 using ResumeSystem.openai;
 using ResumeSystem.ResultModels;
 using ResumeSystem.Service;
@@ -22,23 +24,40 @@ namespace ResumeSystem.Controllers
         public SimpleResume AnalysisTest()
         {
             string filePath = @"D:\PythonCode\openai\txt";
-            Connect connect = new Connect();
-            //调用算法接口，对保存的简历进行分析，并将路径保存在数据库中，并返回数据
-            Dictionary<string, object> resumeInfo = connect.analysis(filePath,1);
+            string dataFilePath = @"D:\PythonCode\openai\AnalysisResult\resumeData7.txt"; // 数据文件路径
+            Dictionary<string, object> resumeInfo = null;
 
-            //传入参数：filepath 返回：FirstAddResumeModelClass 并实现将该路径存入数据库
+            /*// 判断数据文件是否存在
+            if (System.IO.File.Exists(dataFilePath))
+            {
+                // 从文件中读取数据
+                string resumeData = System.IO.File.ReadAllText(dataFilePath);
+                resumeInfo = JsonConvert.DeserializeObject<Dictionary<string, object>>(resumeData);
+            }
+            else
+            {*/
+                // 调用算法接口，对保存的简历进行分析，并将路径保存在数据库中，并返回数据
+            Connect connect = new Connect();
+            resumeInfo = connect.analysis(filePath, 7);
+
+                // 将数据写入文件
+            string resumeData = JsonConvert.SerializeObject(resumeInfo);
+            System.IO.File.WriteAllText(dataFilePath, resumeData);
+            //}
+            // 传入参数：filepath 返回：FirstAddResumeModelClass 并实现将该路径存入数据库
             var storedApplicant = _applicantService.CreateApplicantFromDictionary(resumeInfo);
-            int resumeID = storedApplicant.Result.ID;
+            Applicant applicantResult = storedApplicant.Result;
+            int resumeID = _resumeService.AddResumePath(filePath, applicantResult);
             var simpleResume = new SimpleResume
             {
                 Rid = resumeID,
-                Age = storedApplicant.Result.Age,
-                PhoneNumber = storedApplicant.Result.PhoneNumber,
-                JobIntention = storedApplicant.Result.JobIntention,
-                Gender = storedApplicant.Result.Gender,
-                MatChingScore = storedApplicant.Result.ApplicantProfile.MatchingScore,
+                Age = applicantResult.Age,
+                PhoneNumber = applicantResult.PhoneNumber,
+                JobIntention = applicantResult.JobIntention,
+                Gender = applicantResult.Gender,
+                MatChingScore = applicantResult.ApplicantProfile.MatchingScore,
             };
-            _resumeService.UpdateFilePath(filePath, resumeID);
+
             return simpleResume;
         }
 

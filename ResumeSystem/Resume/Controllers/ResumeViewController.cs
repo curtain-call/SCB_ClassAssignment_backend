@@ -9,6 +9,7 @@ using ResumeSystem.Service;
 using ResumeSystem.openai;
 using ResumeSystem.ResultModel;
 using Microsoft.Extensions.Logging;
+using ResumeSystem.Models;
 
 namespace ResumeSystem.Controllers
 {
@@ -118,17 +119,18 @@ namespace ResumeSystem.Controllers
                     Dictionary<string, object> resumeInfo = connect.analysis("filePath",1);
                     //传入参数：filepath 返回：FirstAddResumeModelClass 并实现将该路径存入数据库
                     var storedApplicant = _applicantService.CreateApplicantFromDictionary(resumeInfo);
-                    int resumeID = storedApplicant.Result.ID;
+                    Applicant applicantResult = storedApplicant.Result;
+                    int resumeID = _resumeService.AddResumePath(filePath, applicantResult);
                     var simpleResume = new SimpleResume
                     {
                         Rid = resumeID,
-                        Age = storedApplicant.Result.Age,
-                        PhoneNumber = storedApplicant.Result.PhoneNumber,
-                        JobIntention = storedApplicant.Result.JobIntention,
-                        Gender = storedApplicant.Result.Gender,
-                        MatChingScore = storedApplicant.Result.ApplicantProfile.MatchingScore,
+                        Age = applicantResult.Age,
+                        PhoneNumber = applicantResult.PhoneNumber,
+                        JobIntention = applicantResult.JobIntention,
+                        Gender = applicantResult.Gender,
+                        MatChingScore = applicantResult.ApplicantProfile.MatchingScore,
                     };
-                    _resumeService.UpdateFilePath(filePath, resumeID);
+                    
                     return simpleResume;
                 }
                 catch (Exception ex)
@@ -139,9 +141,7 @@ namespace ResumeSystem.Controllers
                     // Return an appropriate error message to the user
                     return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while uploading the resume. Please try again later.");*/
                 }
-
             }   
-
             return new SimpleResume();
         }
 
@@ -168,6 +168,5 @@ namespace ResumeSystem.Controllers
             return result;
 
         }
-
     }
 }

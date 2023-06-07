@@ -8,7 +8,7 @@
         public string PhoneNumber { set; get; }
         public string JobIntention { get; set; }
         public string Gender { get; set; }//性别
-        public int MatChingScore { get; set; }//性别
+        public int MatChingScore { get; set; }
 
     }
 }

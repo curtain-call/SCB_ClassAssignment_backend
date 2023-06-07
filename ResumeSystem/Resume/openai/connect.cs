@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Drawing.Printing;
 
 namespace ResumeSystem.openai
 {
@@ -25,24 +26,17 @@ namespace ResumeSystem.openai
             {
                 using (StreamReader reader = process.StandardOutput)
                 {
-                    Console.WriteLine("**********************************");
                     string result = reader.ReadToEnd();
-                    Console.WriteLine("$$$$$$$$$$$$$$$$$$$$");
-                    Console.WriteLine(result);
-                    Console.WriteLine("%%%%%%%%%%%%%%%");
 
+                    // Find the first occurrence of a left curly brace and remove all characters before it
+                    int index = result.IndexOf('{');
+                    if (index >= 0)
+                    {
+                        result = result.Substring(index);
+                    }
+                    Console.WriteLine(result);
                     // 把输出的JSON字符串转换成一个字典
                     Dictionary<string, object> resumeInfo = JsonConvert.DeserializeObject<Dictionary<string, object>>(result);
-
-                    // 输出字典中的每一项
-                    foreach (KeyValuePair<string, object> item in resumeInfo)
-                    {
-                        Console.WriteLine($"{item.Key}: {item.Value}");
-                    }
-
-                    // 将字典转换为 JSON 字符串并输出
-                    string jsonStr = JsonConvert.SerializeObject(resumeInfo);
-                    Console.WriteLine(jsonStr);
 
                     return resumeInfo;
                 }

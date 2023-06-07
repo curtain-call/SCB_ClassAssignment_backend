@@ -19,7 +19,7 @@ namespace ResumeSystem.ResultModels
         public string? MatchingReason { get; set; }
         public string? TalentTraits { get; set; }
 
-        public ICollection<Award> Awards { get; set; }
+        public ICollection<AwardInfo> Awards { get; set; }
         public ICollection<WorkExperiences> WorkExperience { get; set; }
         public ICollection<SkillCertificate> SkillCertificate { get; set; }
 
@@ -28,7 +28,7 @@ namespace ResumeSystem.ResultModels
             Name = "No name provided";
             Email = "No email provided";
             PhoneNumber = "No phone number provided";
-            Awards = new List<Award>();
+            Awards = new List<AwardInfo>();
             WorkExperience = new List<WorkExperiences>();
             SkillCertificate = new List<SkillCertificate>();
         }

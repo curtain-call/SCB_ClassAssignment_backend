@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 using ResumeSystem.Models;
 using ResumeSystem.ResultModels;
 using ResumeSystem.WebSentModel;
-using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
 
 namespace ResumeSystem.Services
@@ -51,7 +50,7 @@ namespace ResumeSystem.Services
                         applicant.PhoneNumber = pair.Value.ToString();
                         break;
                     case "年龄":
-                        applicant.Age = (int)pair.Value;
+                        applicant.Age = Convert.ToInt32(pair.Value);
                         break;
                     case "性别":
                         applicant.Gender = pair.Value.ToString();
@@ -79,7 +78,7 @@ namespace ResumeSystem.Services
                             skillCertificates.Add(new SkillCertificate { SkillName = skill, ApplicantID = applicant.ID });
                         }
                         break;
-                    case "Awards":
+                    case "获奖荣誉":
                         // assuming Awards field is a comma-separated string
                         string[] awardList = pair.Value.ToString().Split(',');
                         foreach (var award in awardList)
@@ -88,7 +87,7 @@ namespace ResumeSystem.Services
                         }
                         break;
                     case "工作经历":
-                        // assuming WorkExperience field is a JSON array of WorkExperience objects
+                        // assuming WorkExperiences field is a JSON array of WorkExperiences objects
                         workExperiences = JsonConvert.DeserializeObject<List<WorkExperiences>>(pair.Value.ToString());
                         foreach (var exp in workExperiences)
                         {
@@ -105,16 +104,14 @@ namespace ResumeSystem.Services
                     case "工作总时间":
                         applicant.TotalWorkYears = int.Parse(pair.Value.ToString());
                         break;
-                    default:
-                        throw new Exception($"Invalid key in data dictionary: {pair.Key}");
                 }
             }
 
             var applicantProfile = new ApplicantProfile
             {
-                TalentTraits = data.ContainsKey("技能") ? data["技能"].ToString() : null,
+                //TalentTraits = data.ContainsKey("技能") ? data["技能"].ToString() : null,
                 MatchingReason = data.ContainsKey("人岗匹配的理由") ? data["人岗匹配的理由"].ToString() : null,
-                MatchingScore = data.ContainsKey("人岗匹配程度分数") ? (int)data["人岗匹配程度分数"] : 0,
+                MatchingScore = data.ContainsKey("人岗匹配程度分数") ? Convert.ToInt32(data["人岗匹配程度分数"]) : 0,
                 WorkStability = data.ContainsKey("工作稳定性的程度") ? data["工作稳定性的程度"].ToString() : null,
                 StabilityReason = data.ContainsKey("给出此工作稳定性判断的原因") ? data["给出此工作稳定性判断的原因"].ToString() : null,
             };
@@ -124,23 +121,58 @@ namespace ResumeSystem.Services
             _dbContext.Applicants.Add(applicant);
             await _dbContext.SaveChangesAsync();
 
+            // 设置每个 SkillCertificate 对象的 ApplicantID，并添加到数据库
+            foreach (var skill in skillCertificates)
+            {
+                skill.ApplicantID = applicant.ID;
+            }
+            _dbContext.SkillCertificates.AddRange(skillCertificates);
+
+            // 设置每个 Award 对象的 ApplicantID，并添加到数据库
+            foreach (var award in awards)
+            {
+                award.ApplicantID = applicant.ID;
+            }
+            _dbContext.Awards.AddRange(awards);
+
+            // 设置每个 WorkExperiences 对象的 ApplicantID，并添加到数据库
+            foreach (var exp in workExperiences)
+            {
+                exp.ApplicantID = applicant.ID;
+            }
+            _dbContext.WorkExperiences.AddRange(workExperiences);
+
+            // 设置每个 EducationBackground 对象的 ApplicantID，并添加到数据库
+            foreach (var edu in educationBackground)
+            {
+                edu.ApplicantID = applicant.ID;
+            }
+            _dbContext.EducationBackgrounds.AddRange(educationBackground);
+
+            // 最后保存这些修改
+            await _dbContext.SaveChangesAsync();
+
             return applicant;
         }
 
         public AllSimpleResumes ForAllSimpleResumes(int userId)
         {
             // 查询数据库，获取所有属于该用户的简历
-            var applicantList = _dbContext.Applicants.Where(applicant => applicant.ID == userId).ToList();
+            var resumeList = _dbContext.Resumes
+                           .Include(r => r.Applicant)
+                           .ThenInclude(a => a.ApplicantProfile)
+                           .Where(r => r.CompanyID == userId)
+                           .ToList();
 
             // 将每个Applicant对象转换为SimpleResume对象
-            var simpleResumeList = applicantList.Select(applicant => new SimpleResume
+            var simpleResumeList = resumeList.Select(_resume => new SimpleResume
             {
-                Rid = applicant.ID,
-                Age = applicant.Age,
-                PhoneNumber = applicant.PhoneNumber,
-                JobIntention = applicant.JobIntention,
-                Gender = applicant.Gender,
-                MatChingScore = applicant.ApplicantProfile?.MatchingScore ?? 0 // 这里假设你的Applicant类有一个名为ApplicantProfile的导航属性，如果不是这样，你需要根据实际情况进行调整
+                Rid = _resume.Applicant.ID,
+                Age = _resume.Applicant.Age,
+                PhoneNumber = _resume.Applicant.PhoneNumber,
+                JobIntention = _resume.Applicant.JobIntention,
+                Gender = _resume.Applicant.Gender,
+                MatChingScore = _resume.Applicant.ApplicantProfile?.MatchingScore ?? 0 
             }).ToList();
 
             // 创建AllSimpleResumes对象并返回
