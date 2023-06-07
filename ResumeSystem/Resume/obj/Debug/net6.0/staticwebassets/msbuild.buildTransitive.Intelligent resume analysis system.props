@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\buildMultiTargeting\Intelligent resume analysis system.props" />
-</Project>
