@@ -154,16 +154,16 @@ namespace ResumeSystem.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("SecondModifyResume")]
-        public SecondModifyResultModel SecondModifyResume(SimpleResume simpleResume)
+        public SecondModifyResultModel SecondModifyResume(DetailedResume detailedResume)
         {
             //将该simpleResume上传数据库
             //返回对应的SecondModifyResultModel
             
-            bool status = _applicantService.UpdateApplicant(simpleResume);
+            bool status = _applicantService.UpdateApplicant(detailedResume);
             var result = new SecondModifyResultModel();
             if (status)
             {
-                result.Code = 20018;
+                result.Code = 20000;
             }
             return result;
 

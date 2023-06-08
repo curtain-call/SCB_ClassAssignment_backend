@@ -75,7 +75,9 @@ namespace ResumeSystem.Services
                         string[] skills = pair.Value.ToString().Split(',');
                         foreach (var skill in skills)
                         {
-                            skillCertificates.Add(new SkillCertificate { SkillName = skill, ApplicantID = applicant.ID });
+                            // Remove unnecessary characters like "{", "}", "[", "]", and '"'
+                            string cleanedSkill = skill.Trim().Replace("{", "").Replace("}", "").Replace("[", "").Replace("]", "").Replace("\"", "").Replace("\r", "").Replace("\n", "");
+                            skillCertificates.Add(new SkillCertificate { SkillName = cleanedSkill, ApplicantID = applicant.ID });
                         }
                         break;
                     case "获奖荣誉":
@@ -83,8 +85,10 @@ namespace ResumeSystem.Services
                         string[] awardList = pair.Value.ToString().Split(',');
                         foreach (var award in awardList)
                         {
-                            awards.Add(new Award { AwardName = award, ApplicantID = applicant.ID });
-                        }
+                            // Remove unnecessary characters like "{", "}", "[", "]", and '"'
+                            string cleanedAward = award.Trim().Replace("{", "").Replace("}", "").Replace("[", "").Replace("]", "").Replace("\"", "").Replace("\r", "").Replace("\n", "");
+                            awards.Add(new Award { AwardName = cleanedAward, ApplicantID = applicant.ID });
+                        }   
                         break;
                     case "工作经历":
                         // assuming WorkExperiences field is a JSON array of WorkExperiences objects
@@ -184,14 +188,74 @@ namespace ResumeSystem.Services
             return allSimpleResumes;
         }
 
-        public Boolean UpdateApplicant(SimpleResume simpleResume)
+        public Boolean UpdateApplicant(DetailedResume detailedResume)
         {
-            var existingApplicant = _dbContext.Applicants.FirstOrDefault(applicant => applicant.ID == simpleResume.Rid);
+            var resume = _dbContext.Resumes.FirstOrDefault(r => r.ID == detailedResume.rId);
+
+            if (resume == null) { return false; }
+
+            var existingApplicant = _dbContext.Applicants
+                .Include(a => a.ApplicantProfile)
+                .Include(a => a.WorkExperiences)
+                .Include(a => a.SkillCertificates)
+                .Include(a => a.EducationBackgrounds)
+                .Include(a => a.Awards)
+                .FirstOrDefault(applicant => applicant.ID == resume.ApplicantID);
             if (existingApplicant == null) { return false; }
-            existingApplicant.Age = simpleResume.Age;
-            existingApplicant.PhoneNumber = simpleResume.PhoneNumber;
-            existingApplicant.JobIntention = simpleResume.JobIntention;
-            existingApplicant.Gender = simpleResume.Gender;
+            existingApplicant.Name = detailedResume.Name;
+            existingApplicant.Email = detailedResume.Email;
+            existingApplicant.PhoneNumber = detailedResume.PhoneNumber;
+            existingApplicant.Age = detailedResume.Age;
+            existingApplicant.Gender = detailedResume.Gender;
+            existingApplicant.JobIntention = detailedResume.JobIntention;
+            existingApplicant.SelfEvaluation = detailedResume.SelfEvaluation;
+            existingApplicant.HighestEducation = detailedResume.HighestEducation;
+            existingApplicant.ApplicantProfile.WorkStability = detailedResume.WorkStability;
+            existingApplicant.ApplicantProfile.StabilityReason = detailedResume.WorkStabilityReason;
+            existingApplicant.ApplicantProfile.MatchingScore = detailedResume.MatchingScore;
+            existingApplicant.ApplicantProfile.MatchingReason = detailedResume.MatchingReason;
+
+            // Handle WorkExperiences
+            _dbContext.WorkExperiences.RemoveRange(existingApplicant.WorkExperiences); // Remove existing
+            existingApplicant.WorkExperiences = detailedResume.WorkExperience.Select(w => new WorkExperiences
+            {
+                ApplicantID = existingApplicant.ID,
+                CompanyName = w.CompanyName,
+                Position = w.Position,
+                Time = w.Time,
+                Task = w.Task
+            }).ToList();  // Add new
+
+            // Handle SkillCertificates
+            _dbContext.SkillCertificates.RemoveRange(existingApplicant.SkillCertificates); // Remove existing
+            existingApplicant.SkillCertificates = detailedResume.SkillCertificate.Select(s => new SkillCertificate
+            {
+                ApplicantID = existingApplicant.ID,
+                SkillName = s.SkillName
+            }).ToList();  // Add new
+
+            // Handle Awards
+            _dbContext.Awards.RemoveRange(existingApplicant.Awards); // Remove existing
+            existingApplicant.Awards = detailedResume.Awards.Select(a => new Award
+            {
+                ApplicantID = existingApplicant.ID,
+                AwardName = a.AwardName
+            }).ToList();  // Add new
+            _dbContext.SaveChanges();
+
+            if (detailedResume.EducationBackgrounds == null)
+            {
+                detailedResume.EducationBackgrounds = new List<EducationBackground>();
+            }
+            _dbContext.EducationBackgrounds.RemoveRange(existingApplicant.EducationBackgrounds); // Remove existing
+            existingApplicant.EducationBackgrounds = detailedResume.EducationBackgrounds.Select(ed => new EducationBackground
+            {
+                ApplicantID = existingApplicant.ID,
+                Time = ed.Time,
+                School = ed.School,
+                Major = ed.Major
+            }).ToList();  // Add new
+            _dbContext.SaveChanges();
             return true;
         }
 

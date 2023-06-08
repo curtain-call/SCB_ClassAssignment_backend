@@ -8,6 +8,7 @@ using ResumeSystem.WebSentModel;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
 using Org.BouncyCastle.Crypto;
+using ResumeSystem.ResultModel;
 
 namespace ResumeSystem.Service
 {
@@ -34,9 +35,10 @@ namespace ResumeSystem.Service
             {
                 return null;
             }
-
+            
             var detailedResume = new DetailedResume
-            {
+            {   
+                rId = resumeId,
                 Age = resume.Applicant.Age,
                 Name = resume.Applicant.Name,
                 Email = resume.Applicant.Email,
@@ -46,14 +48,15 @@ namespace ResumeSystem.Service
                 SelfEvaluation = resume.Applicant.SelfEvaluation,
                 HighestEducation = resume.Applicant.HighestEducation,
                 //TalentTraits = resume.Applicant.ApplicantProfile.TalentTraits,
-                Awards = resume.Applicant.Awards.Select(a => new AwardInfo { AwardName = a.AwardName }).ToList(), // assign Awards
-                WorkExperience = resume.Applicant.WorkExperiences.ToList(),  // assign WorkExperiences
-                SkillCertificate = resume.Applicant.SkillCertificates.ToList(),  // assign SkillCertificates
+                Awards = resume.Applicant.Awards?.Select(a => new AwardInfo { AwardName = a.AwardName }).ToList() ?? new List<AwardInfo>(), // assign Awards
+                WorkExperience = resume.Applicant.WorkExperiences?.ToList() ?? new List<WorkExperiences>(),  // assign WorkExperiences
+                SkillCertificate = resume.Applicant.SkillCertificates?.ToList() ?? new List<SkillCertificate>(),  // assign SkillCertificates
                 WorkStability = resume.Applicant.ApplicantProfile.WorkStability,
                 WorkStabilityReason = resume.Applicant.ApplicantProfile.StabilityReason,
                 MatchingScore = resume.Applicant.ApplicantProfile.MatchingScore,
                 MatchingReason = resume.Applicant.ApplicantProfile.MatchingReason,
-            };
+                EducationBackgrounds = resume.Applicant.EducationBackgrounds?.ToList() ?? new List<EducationBackground>()
+        };
 
             return detailedResume;
         }

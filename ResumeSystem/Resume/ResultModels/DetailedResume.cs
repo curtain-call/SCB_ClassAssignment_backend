@@ -5,6 +5,7 @@ namespace ResumeSystem.ResultModels
 {
     public class DetailedResume
     {   
+        public int rId { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
@@ -17,11 +18,11 @@ namespace ResumeSystem.ResultModels
         public string? WorkStability { get; set; }
         public int MatchingScore { get; set;}
         public string? MatchingReason { get; set; }
-        public string? TalentTraits { get; set; }
 
         public ICollection<AwardInfo> Awards { get; set; }
         public ICollection<WorkExperiences> WorkExperience { get; set; }
         public ICollection<SkillCertificate> SkillCertificate { get; set; }
+        public ICollection<EducationBackground> EducationBackgrounds { get; set; } //教育背景
 
         public DetailedResume()
         {
