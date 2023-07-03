@@ -116,11 +116,11 @@ namespace ResumeSystem.Controllers
                     file.CopyTo(fileStream);
 
                     //调用算法接口，对保存的简历进行分析，并将路径保存在数据库中，并返回数据
-                    Dictionary<string, object> resumeInfo = connect.analysis("filePath",1);
+                    Dictionary<string, object> resumeInfo = connect.analysis(filePath,1);
                     //传入参数：filepath 返回：FirstAddResumeModelClass 并实现将该路径存入数据库
                     var storedApplicant = _applicantService.CreateApplicantFromDictionary(resumeInfo);
                     Applicant applicantResult = storedApplicant.Result;
-                    int resumeID = _resumeService.AddResumePath(filePath, applicantResult);
+                    int resumeID = _resumeService.AddResumePath(filePath, applicantResult, userId);
                     var simpleResume = new SimpleResume
                     {
                         Rid = resumeID,

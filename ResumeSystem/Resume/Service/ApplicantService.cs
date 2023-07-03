@@ -190,7 +190,7 @@ namespace ResumeSystem.Services
 
         public Boolean UpdateApplicant(DetailedResume detailedResume)
         {
-            var resume = _dbContext.Resumes.FirstOrDefault(r => r.ID == detailedResume.rId);
+            var resume = _dbContext.Resumes.FirstOrDefault(r => r.ID == detailedResume.Id);
 
             if (resume == null) { return false; }
 

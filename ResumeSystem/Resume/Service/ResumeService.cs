@@ -29,6 +29,7 @@ namespace ResumeSystem.Service
                                 .Include(r => r.Applicant.WorkExperiences)  // include WorkExperiences
                                 .Include(r => r.Applicant.Awards) // include Awards
                                 .Include(r => r.Applicant.SkillCertificates) // include SkillCertificates
+                                .Include(r => r.Applicant.EducationBackgrounds)
                                 .FirstOrDefault(r => r.ID == resumeId);
 
             if (resume == null)
@@ -38,7 +39,7 @@ namespace ResumeSystem.Service
             
             var detailedResume = new DetailedResume
             {   
-                rId = resumeId,
+                Id = resumeId,
                 Age = resume.Applicant.Age,
                 Name = resume.Applicant.Name,
                 Email = resume.Applicant.Email,
@@ -73,13 +74,13 @@ namespace ResumeSystem.Service
             }
         }*/
 
-        public int AddResumePath(string filePath, Applicant applicantResult)
+        public int AddResumePath(string filePath, Applicant applicantResult, int companyID)
         {
             var resume = new Resume
             {
                 FilePath = filePath,
                 ApplicantID = applicantResult.ID,
-                CompanyID = 1,
+                CompanyID = companyID,
                 JobPositionID = 1,
                 Applicant = applicantResult,
             };
