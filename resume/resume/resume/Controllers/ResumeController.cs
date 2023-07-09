@@ -4,6 +4,10 @@ using resume.Others;
 using resume.WebSentModel;
 using resume.ResultModels;
 using System.Security.Cryptography;
+using resume.Services;
+using resume.Models;
+using resume.Service;
+using System;
 
 namespace resume.Controllers
 {
@@ -11,7 +15,15 @@ namespace resume.Controllers
     [ApiController]
     public class ResumeController : ControllerBase
     {
-
+        private readonly CompanyService _companyService;
+        private readonly ResumeService _resumeService;
+        private readonly ApplicantService _applicantService;
+        public ResumeController(CompanyService companyService, ResumeService resumeService, ApplicantService applicantService)
+        {
+            _companyService = companyService;
+            _resumeService = resumeService;
+            _applicantService = applicantService;
+        }
         /// <summary>
         /// 此时，点击上传简历页面时，需要我们返回岗位下拉框里面的所有内容
         /// </summary>
@@ -23,9 +35,8 @@ namespace resume.Controllers
         {
             int userId = webSentUserId.Id;//用户ID
             //此时，需要完成的是，查数据库返回所有岗位的名称以及ID；
-
-
-            return new HomeToUploadResume();
+            var result = _companyService.UploadJobInfo(userId);
+            return result;
         }
 
 
@@ -60,10 +71,33 @@ namespace resume.Controllers
             //将该网络传来的文件，全部都赋值给那个新建的文件
             file.CopyTo(fileStream);
 
-
-
             //接下来就是调用算法分析简历，返回对应的简历信息
+            Dictionary<string, object> resumeInfo = connect.analysis(absoluteName, hashedFileName);
+            Console.WriteLine(resumeInfo);
+            //Console.WriteLine("#############################################################");
+            /*foreach (KeyValuePair<string, object> kvp in resumeInfo) {
+                Console.WriteLine("key = {0}:value{1}", kvp.Key, kvp.Value);
 
+            }*/
+            //Console.WriteLine("=====================");
+            //传入参数：filepath 返回：FirstAddResumeModelClass 并实现将该路径存入数据库
+            var storedApplicant = _applicantService.CreateApplicantFromDictionary(resumeInfo);
+            Applicant applicantResult = storedApplicant.Result;
+            int resumeID = _resumeService.AddResumePath(filePath, applicantResult, userId);
+            var simpleResume = new SimpleResume
+            {
+                Rid = resumeID,
+                Name = applicantResult.Name,
+                Age = applicantResult.Age,
+                HighestEducation = applicantResult.HighestEducation,
+                PhoneNumber = applicantResult.PhoneNumber,
+                JobIntention = applicantResult.JobIntention,
+                Gender = applicantResult.Gender,
+                MatChingScore = applicantResult.ApplicantProfile.MatchingScore,
+            };
+
+            ResumeId resumeId = new ResumeId();
+            resumeId.Rid = resumeID;
 
             return new FirstAddResumeModelClass();
         }
@@ -75,8 +109,14 @@ namespace resume.Controllers
         public SecondAddResumeModelClass SencondUploadResume(FirstAddResumeModelClass firstAddResume) {
             //此时将修改后的数据，上传到数据库
             //并返回是否添加成功的状态码。
-            return new SecondAddResumeModelClass();
-        
+            DetailedResume detailedResume = firstAddResume.DetailedResume;
+            var result = new SecondAddResumeModelClass();
+            bool status = _applicantService.UpdateApplicant(detailedResume);
+            if (status)
+            {
+                result.Code = 20000;
+            } else { result.Code = 60204;  }
+            return result;
         
         }
 
@@ -130,6 +170,41 @@ namespace resume.Controllers
             //查出该ID所对饮的简历数量
             return new AgeInfoForGraphClass();
         }
+
+        ///简历总数（类似与外卖那个首页的总数）
+        ///每个岗位多少人：简历总数，每个岗位人数（瀑布图）
+        ///传入
+        //{
+        //  userid:
+        //}
+        //    返回：
+        //{
+        //  "totalResumes": 500,
+        //  "jobResumeCounts": [
+        //  {"jobName": "jobName", "resumeCount": 10},
+        //  { "jobName": "jobName", "resumeCount": 20},
+        //  ]
+        //}
+        [HttpPost("graph/total")]
+        public GraphForJonResumeCountModelClass ForJonResumeCount(WebSentUserId webSentUserId)
+        {
+            int id = webSentUserId.Id;//这是用户ID
+
+            //查数据库返回每个岗位，对应简历的值，详细见json格式
+
+            var jobResumeCount1 = new JobResumeCount() { JobName = "程序员", ResumeCount = 20 };
+            var jobResumeCount2 = new JobResumeCount() { JobName = "服务员", ResumeCount = 30 };
+
+            var listJobResumeCount = new List<JobResumeCount>() { jobResumeCount1, jobResumeCount2 };
+
+            var jobResumeCounts = new GraphForJonResumeCountModelClass()
+            {
+                JobResumeCounts = listJobResumeCount,
+                TotalResumes = 50,
+            };
+            return jobResumeCounts;
+        }
+
 
 
         /// <summary>

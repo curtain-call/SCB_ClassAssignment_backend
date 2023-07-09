@@ -5,7 +5,7 @@
     /// </summary>
     public class JobResumeCount
     {
-        public string JobName { get; set; }//岗位名称
+        public string? JobName { get; set; }//岗位名称
         public int ResumeCount { get; set; }//该公司的该岗位的简历数量
     }
 

@@ -1,4 +1,5 @@
-﻿namespace resume.Others
+﻿using resume.Models;
+namespace resume.Others
 {
     public class DetailedResume
     {
@@ -17,7 +18,7 @@
         public int MatchingScore { get; set; }
         public string MatchingReason { get; set; }
         public string TalentTraits { get; set; }
-        public List<string> Awards { get; set; }
+        public List<AwardInfo> Awards { get; set; }
         public List<WorkExperience> WorkExperience { get; set; }
         public List<SkillCertificate> SkillCertificate { get; set; }
         public List<EducationBackground> EducationBackgrounds { get; set; }

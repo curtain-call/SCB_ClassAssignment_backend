@@ -9,6 +9,6 @@ namespace resume.Others
     public class JobInfoForUpload
     {
         public string JobName { get; set; }//岗位的名称
-        public string JobId { get; set; }//岗位在数据库中的ID
+        public int JobId { get; set; }//岗位在数据库中的ID
     }
 }

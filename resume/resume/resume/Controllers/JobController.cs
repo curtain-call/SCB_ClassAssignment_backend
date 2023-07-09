@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using resume.Others;
-
 using resume.ResultModels;
 using resume.WebSentModel;
-using resume.Others;
 
 namespace resume.Controllers
 {

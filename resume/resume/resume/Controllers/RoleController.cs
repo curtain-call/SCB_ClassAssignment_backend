@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using resume.Others;
 using resume.ResultModels;
+using resume.Services;
 using resume.WebSentModel;
 
 namespace resume.Controllers
@@ -10,7 +11,11 @@ namespace resume.Controllers
     [ApiController]
     public class RoleController : ControllerBase
     {
-
+        private readonly CompanyService _companyService;
+        public RoleController(CompanyService companyService)
+        {
+            _companyService = companyService;
+        }
         /// <summary>
         /// 这个接口用于创建新的用户。接口需要接受的数据包括：
         ///- `username`：用户名，字符串类型。
@@ -23,8 +28,8 @@ namespace resume.Controllers
         public CreateUserResultClass CreateUser(CreateUserSentClass NewUserInfo) 
         {
             //将该新的用户存入数据库，并且注意公司的号
-
-            return new CreateUserResultClass { };
+            var result = _companyService.CreateUserByClass(NewUserInfo);
+            return result;
         }
 
         /// <summary>
@@ -35,9 +40,9 @@ namespace resume.Controllers
         [HttpPost("deleteUser")]
         public DeleteUserResultClass DeleteUser(DeleteUserSentClass deleteUserSent) 
         {
-            int id = deleteUserSent.Id;
+            var result = _companyService.DeleteUser(deleteUserSent);
             //需要将该ID对应的用户删除
-            return new DeleteUserResultClass();
+            return result;
         }
 
 
@@ -52,14 +57,10 @@ namespace resume.Controllers
         {
             int userId=webSentUserId.Id;
             //返回该公司ID所管理的所有简历的信息
-            return new AllUserResultClass { };
+            var result = _companyService.ForAllUsers(userId);
+            return result;
         }
 
-
     }
-
-    
-
-
 
 }

@@ -5,9 +5,10 @@
     /// </summary>
     public class CreateUserSentClass
     {
-        public int Id { get; set; }//这是公司的ID，也就是管理者的ID
-        public string Username { get; set; }
+        public int CompanyID { get; set; }
+        public string Account { get; set; }
+        public string Email { get; set; }
         public string Password { get; set; }
-        public string Role { get; set; }
+        public string Role { get; set; }  // 用户的角色，例如 "admin", "normal" 等
     }
 }
