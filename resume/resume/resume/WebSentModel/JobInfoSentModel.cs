@@ -6,6 +6,7 @@
     /// </summary>
     public class JobInfoSentModel
     {
+        public int UserId { get; set; }
         public string JobName { get; set; }
         public string JobDetails { get; set; }
         public List<string> Options { get; set; }

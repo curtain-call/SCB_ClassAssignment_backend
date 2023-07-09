@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <Folder Include="Resumes\2023\7\2\" />
+    <Folder Include="openai\" />
   </ItemGroup>
 
 </Project>

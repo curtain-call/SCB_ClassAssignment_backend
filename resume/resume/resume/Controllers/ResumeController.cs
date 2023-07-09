@@ -7,7 +7,7 @@ using System.Security.Cryptography;
 using resume.Services;
 using resume.Models;
 using resume.Service;
-using System;
+using resume.open;
 
 namespace resume.Controllers
 {
@@ -117,7 +117,6 @@ namespace resume.Controllers
                 result.Code = 20000;
             } else { result.Code = 60204;  }
             return result;
-        
         }
 
         /// <summary>
@@ -142,9 +141,9 @@ namespace resume.Controllers
         /// <returns></returns>
         [HttpPost("OneDetailedResumeInfo")]
         public DetailedResume ForOneDetailedResumeInfo(WebSentUserId resumeId) { 
-        int id = resumeId.Id;//此时的ID便是该简历的resumeID；
+            int id = resumeId.Id;//此时的ID便是该简历的resumeID；
 
-        return new DetailedResume();
+            return new DetailedResume();
         }
 
         ///-------------以下所有的接口都是为了简历统计可视化中的图----------------

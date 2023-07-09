@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using resume.Others;
 using resume.ResultModels;
+using resume.Services;
 using resume.WebSentModel;
 
 namespace resume.Controllers
@@ -10,7 +11,11 @@ namespace resume.Controllers
     [ApiController]
     public class JobController : ControllerBase
     {
-
+        private readonly JobService _jobService;
+        public JobController(JobService jobService)
+        {
+            _jobService = jobService;
+        }
         /// <summary>
         /// 上传岗位，包括岗位名称，岗位详情，设置选项，最低工作年限，最低学历等。
         /// </summary>
@@ -20,9 +25,8 @@ namespace resume.Controllers
         public JobIdResultClass UploadJob(JobInfoSentModel jobInfo) {
             //将该Jobinfo存入数据库
             //并返回新的岗位ID
-
-            return new JobIdResultClass();
-        
+            var result = _jobService.UploadJob(jobInfo);
+            return result;
         }
 
         /// <summary>
@@ -37,7 +41,8 @@ namespace resume.Controllers
             int jobId = allId.JobId;
 
             //根据userID以及jobID 查数据库 该公司该岗位对应的所有简历
-            return new JobMatchResultModelClass();
+            var result = _jobService.JobMatchResume(userId, jobId);
+            return result;
         }
 
         /// <summary>
