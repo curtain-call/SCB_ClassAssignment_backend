@@ -11,9 +11,10 @@
         public string? JobIntention { get; set; } // 求职意向岗位
         public string? HighestEducation { get; set; } // 最高学历
         public string? Major { get; set; } //专业
-        public string? GraduatedFrom { get; set; } // 毕业院校     
+        public string? GraduatedFrom { get; set; } // 毕业院校
+        public string? GraduatedFromLevel { get; set; } //毕业院校等级
         public string? SelfEvaluation { get; set; } // 自我评价        
-        public string? TotalWorkYears { get; set; } // 工作总时间
+        public int TotalWorkYears { get; set; } // 工作总时间
 
         // 导航属性
         public Resume Resume { get; set; }

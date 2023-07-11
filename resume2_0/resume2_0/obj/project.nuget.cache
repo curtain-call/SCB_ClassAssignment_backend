@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "mux4A4jGPLzNc89lTFiMPfASV8vIDhub79FUbIvnWTnFxqn4o9OEU5y7mS/dfiC+TixbhZqQWDrbRTInX+6TwQ==",
+  "dgSpecHash": "mDg2CY9f8ohl8uPL6hfiKCGfWcLps/qZQH45dr30jRXYcA4hg5KD/IHXPISpwbkWQ11hn+GiN/fr/1fB26NSng==",
   "success": true,
-  "projectFilePath": "D:\\武大 负责项目\\中国软件杯\\SCB_ClassAssignment_backend\\resume2_0\\resume2_0\\resume2_0.csproj",
+  "projectFilePath": "D:\\visualStudio workspace\\SCB_ClassAssignment_backend\\resume2_0\\resume2_0\\resume2_0.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Liwen Yang\\.nuget\\packages\\microsoft.extensions.apidescription.server\\3.0.0\\microsoft.extensions.apidescription.server.3.0.0.nupkg.sha512",
     "C:\\Users\\Liwen Yang\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",

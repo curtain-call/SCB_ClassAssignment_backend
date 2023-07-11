@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using resume.Models;
 using resume.Others;
 using resume.ResultModels;
+using static Google.Protobuf.Collections.MapField<TKey, TValue>;
 
 namespace resume.Services
 {
@@ -31,7 +32,7 @@ namespace resume.Services
             var applicant = new Applicant();
             List<SkillCertificate> skillCertificates = new List<SkillCertificate>();
             List<Award> awards = new List<Award>();
-            List<WorkExperiences> workExperiences = new List<WorkExperiences>();
+            List<WorkExperience> workExperiences = new List<WorkExperience>();
             List<EducationBackground> educationBackground = new List<EducationBackground>();
             foreach (var pair in data)
             {
@@ -52,7 +53,6 @@ namespace resume.Services
                     case "性别":
                         applicant.Gender = pair.Value != null ? pair.Value.ToString() : null;
                         break;
-                        break;
                     case "求职意向岗位":
                         applicant.JobIntention = pair.Value != null ? pair.Value.ToString() : null;
                         break;
@@ -61,6 +61,9 @@ namespace resume.Services
                         break;
                     case "最高学历":
                         applicant.HighestEducation = pair.Value != null ? pair.Value.ToString() : null;
+                        break;
+                    case "最高学历学校等级":
+                        applicant.GraduatedFromLevel = pair.Value != null ? pair.Value.ToString() : null;
                         break;
                     case "毕业院校":
                         applicant.GraduatedFrom = pair.Value != null ? pair.Value.ToString() : null;
@@ -98,7 +101,7 @@ namespace resume.Services
                         if (pair.Value != null) // check if pair.Value is not null
                         {
                             // assuming WorkExperiences field is a JSON array of WorkExperiences objects
-                            workExperiences = JsonConvert.DeserializeObject<List<WorkExperiences>>(pair.Value.ToString());
+                            workExperiences = JsonConvert.DeserializeObject<List<WorkExperience>>(pair.Value.ToString());
                             foreach (var exp in workExperiences)
                             {
                                 exp.ApplicantID = applicant.ID;
@@ -117,7 +120,7 @@ namespace resume.Services
                         }
                         break;
                     case "工作总时间":
-                        applicant.TotalWorkYears = pair.Value != null ? pair.Value.ToString() : null;
+                        applicant.TotalWorkYears = pair.Value != null ? Convert.ToInt32(pair.Value) : 0;
                         break;
                 }
             }
@@ -170,13 +173,25 @@ namespace resume.Services
             return applicant;
         }
 
-        public AllSimpleResumes ForAllSimpleResumes(int userId)
+        public AllSimpleResumeInfoClass ForAllSimpleResumes(int userId)
         {
+            // 查找当前用户对应的公司
+            var company = _dbContext.Users
+                                    .Include(u => u.Company)
+                                    .FirstOrDefault(u => u.ID == userId)
+                                    ?.Company;
+
+            if (company == null)
+            {
+                // 如果找不到对应的公司，返回错误信息
+                return new AllSimpleResumeInfoClass { SimpleResumes = new List<SimpleResume>(), Code = 60204 };
+            }
+
             // 查询数据库，获取所有属于该用户的简历
             var resumeList = _dbContext.Resumes
                            .Include(r => r.Applicant)
                            .ThenInclude(a => a.ApplicantProfile)
-                           .Where(r => r.CompanyID == userId)
+                           .Where(r => r.CompanyID == company.ID)
                            .ToList();
 
             // 将每个Applicant对象转换为SimpleResume对象
@@ -189,16 +204,17 @@ namespace resume.Services
                 PhoneNumber = _resume.Applicant.PhoneNumber,
                 JobIntention = _resume.Applicant.JobIntention,
                 Gender = _resume.Applicant.Gender,
-                MatChingScore = _resume.Applicant.ApplicantProfile?.MatchingScore ?? 0
+                MatchingScore = _resume.Applicant.ApplicantProfile?.MatchingScore ?? 0
             }).ToList();
 
             // 创建AllSimpleResumes对象并返回
-            var allSimpleResumes = new AllSimpleResumes
+            var allSimpleResumeInfo = new AllSimpleResumeInfoClass
             {
-                SimpleResumes = simpleResumeList
+                SimpleResumes = simpleResumeList,
+                Code = 20000
             };
 
-            return allSimpleResumes;
+            return allSimpleResumeInfo;
         }
 
         public Boolean UpdateApplicant(DetailedResume detailedResume)

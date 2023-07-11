@@ -2,11 +2,15 @@
 {
     public class HighestEducation
     {
-        public int HighSchoolOrLess { get; set; }
-        public int JuniorCollege { get; set; }
-        public int Bachelor { get; set; }
-        public int Master { get; set; }
         public int Doctor { get; set; }
+        public int Master { get; set; }
+        public int Bachelor { get; set; }
+        public int JuniorCollege { get; set; }
+        public int HighSchoolOrLess { get; set; }
+      
+    
+     
+       
         // ...
     }
 

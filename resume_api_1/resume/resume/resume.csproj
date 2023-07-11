@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Resumes\2023\7\2\C822688C3FE845E1C36D4DE7F6B54C36A41D1259F86264C8E11C59A0FFA07BF0.v2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resumes\2023\7\2\" />
+  </ItemGroup>
+
+</Project>

@@ -230,11 +230,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\武大 负责项目\\中国软件杯\\SCB_ClassAssignment_backend\\resume2_0\\resume2_0\\resume2_0.csproj",
+      "projectUniqueName": "D:\\visualStudio workspace\\SCB_ClassAssignment_backend\\resume2_0\\resume2_0\\resume2_0.csproj",
       "projectName": "resume2_0",
-      "projectPath": "D:\\武大 负责项目\\中国软件杯\\SCB_ClassAssignment_backend\\resume2_0\\resume2_0\\resume2_0.csproj",
+      "projectPath": "D:\\visualStudio workspace\\SCB_ClassAssignment_backend\\resume2_0\\resume2_0\\resume2_0.csproj",
       "packagesPath": "C:\\Users\\Liwen Yang\\.nuget\\packages\\",
-      "outputPath": "D:\\武大 负责项目\\中国软件杯\\SCB_ClassAssignment_backend\\resume2_0\\resume2_0\\obj\\",
+      "outputPath": "D:\\visualStudio workspace\\SCB_ClassAssignment_backend\\resume2_0\\resume2_0\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
