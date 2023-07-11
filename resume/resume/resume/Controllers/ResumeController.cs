@@ -41,7 +41,7 @@ namespace resume.Controllers
 
 
 
-        [HttpPost("upload")]
+        /*[HttpPost("upload")]
         public FirstAddResumeModelClass UploadResume(IFormFile file, int jobId, int UserId)
         {
 
@@ -76,10 +76,10 @@ namespace resume.Controllers
             Dictionary<string, object> resumeInfo = connect.analysis(filePath);
             Console.WriteLine(resumeInfo);
             //Console.WriteLine("#############################################################");
-            /*foreach (KeyValuePair<string, object> kvp in resumeInfo) {
+            *//*foreach (KeyValuePair<string, object> kvp in resumeInfo) {
                 Console.WriteLine("key = {0}:value{1}", kvp.Key, kvp.Value);
 
-            }*/
+            }*//*
             //Console.WriteLine("=====================");
             //传入参数：filepath 返回：FirstAddResumeModelClass 并实现将该路径存入数据库
             var storedApplicant = _applicantService.CreateApplicantFromDictionary(resumeInfo);
@@ -101,7 +101,7 @@ namespace resume.Controllers
             resumeId.Rid = resumeID;
 
             return new FirstAddResumeModelClass();
-        }
+        }*/
 
 
 

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using resume.Models;
 using resume.Others;
 using resume.ResultModels;
-using static Google.Protobuf.Collections.MapField<TKey, TValue>;
+//using static Google.Protobuf.Collections.MapField<TKey, TValue>;
 
 namespace resume.Services
 {
@@ -246,7 +246,7 @@ namespace resume.Services
 
             // Handle WorkExperiences
             _dbContext.WorkExperiences.RemoveRange(existingApplicant.WorkExperiences); // Remove existing
-            existingApplicant.WorkExperiences = detailedResume.WorkExperience.Select(w => new WorkExperiences
+            existingApplicant.WorkExperiences = detailedResume.WorkExperience.Select(w => new WorkExperience
             {
                 ApplicantID = existingApplicant.ID,
                 CompanyName = w.CompanyName,

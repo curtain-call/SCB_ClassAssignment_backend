@@ -210,7 +210,7 @@ namespace resume.Services
             var result = new CreateUserResultClass();
 
             // 先检查公司是否存在
-            var company = _dbContext.Companies.FirstOrDefault(c => c.ID == NewUserInfo.ID);
+            var company = _dbContext.Companies.FirstOrDefault(c => c.ID == NewUserInfo.CompanyID);
             if (company == null)
             {
                 result.Code = 400;
