@@ -75,32 +75,15 @@ namespace resume.Controllers
             var resumeInfo = connect.analysis(filePath);
             //string filePathTest = @"D:\visualStudio workspace\SCB_ClassAssignment_backend\end\word\1.docx";
             //Dictionary<string, object> resumeInfo = connect.analysis(filePathTest);
-            Console.WriteLine(resumeInfo);  
- 
-            var storedApplicant = _applicantService.CreateApplicantFromDictionary(resumeInfo);
-            Applicant applicantResult = storedApplicant.Result;
-            int resumeID = _resumeService.AddResumePath(filePath, applicantResult, UserId, jobId);
-            var detailedResume = new DetailedResume
-            {
-                Id = applicantResult.ID,
-                Age = applicantResult.Age,
-                Name = applicantResult.Name,
-                Email = applicantResult.Email,
-                PhoneNumber = applicantResult.PhoneNumber,
-                JobIntention = applicantResult.JobIntention,
-                Gender = applicantResult.Gender,
-                SelfEvaluation = applicantResult.SelfEvaluation,
-                HighestEducation = applicantResult.HighestEducation,
-                //TalentTraits = applicantResult.ApplicantProfile.TalentTraits,
-                Awards = applicantResult.Awards?.Select(a => new AwardInfo { AwardName = a.AwardName }).ToList() ?? new List<AwardInfo>(), // assign Awards
-                WorkExperience = applicantResult.WorkExperiences?.ToList() ?? new List<WorkExperience>(),  // assign WorkExperiences
-                SkillCertificate = applicantResult.SkillCertificates?.ToList() ?? new List<SkillCertificate>(),  // assign SkillCertificates
-                WorkStability = applicantResult.ApplicantProfile.WorkStability,
-                WorkStabilityReason = applicantResult.ApplicantProfile.StabilityReason,
-                MatchingScore = applicantResult.ApplicantProfile.MatchingScore,
-                MatchingReason = applicantResult.ApplicantProfile.MatchingReason,
-                EducationBackgrounds = applicantResult.EducationBackgrounds?.ToList() ?? new List<EducationBackground>()
-            };
+            Console.WriteLine(resumeInfo);
+
+            string fileUrlWithoutFileName_1 = @$"{DateTime.Now.Year}\{DateTime.Now.Month}\{"image"}";
+            string filePath_1 = Path.Combine(Directory.GetCurrentDirectory(), $@"{staticFileRoot}\{fileUrlWithoutFileName_1}", newFileName);
+
+            var storedApplicantId = _applicantService.CreateApplicantFromDictionary(resumeInfo).Result;
+
+            int resumeID = _resumeService.AddResumePath(filePath, filePath_1, storedApplicantId, UserId, jobId);
+            var detailedResume = _resumeService.GetResumeById(resumeID);
             var result = new FirstAddResumeModelClass() { 
                 Code = 20000,
                 DetailedResume = detailedResume
@@ -114,7 +97,6 @@ namespace resume.Controllers
             Console.WriteLine(resumeId);
             string imagePath = _resumeService.GetImagePathById(resumeId);
             //string filePath = "C:\\Users\\86178\\Desktop\\大学本科学习资料\\大二下\\中国软件杯\\resume\\resume\\Resumes\\2023\\7\\11\\C5C5FA6B19833453071A6E76E1836D835D555FFF13388E450DCA7FE55F82040E.jpg"; // 文件路径
-            //
             FileStream fileStream = new FileStream(imagePath, FileMode.Open);
 
             string mimeType;

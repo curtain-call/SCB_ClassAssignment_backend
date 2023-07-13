@@ -5,12 +5,13 @@
     /// </summary>
     public class JobMatchResultModelClass
     {
-        public List<ResumeMatch> Matches { get; set; }
+        public ICollection<ResumeMatch> Matches { get; set; }
 
     }
     public class ResumeMatch
     {
         public int ResumeId { get; set; }
+        public string Name { get; set; }
         public int Score { get; set; }
         public string MatchReason { get; set; }
     }

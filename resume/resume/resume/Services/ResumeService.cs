@@ -69,19 +69,21 @@ namespace resume.Service
             }
         }*/
 
-        public int AddResumePath(string filePath, Applicant applicantResult, int userId, int jobId)
+        public int AddResumePath(string filePath, string imagePath, int storedApplicantId, int userId, int jobId)
         {
             var company = _dbContext.Users
                                    .Include(u => u.Company)
                                    .FirstOrDefault(u => u.ID == userId)
                                    ?.Company;
+            var applicant = _dbContext.Applicants.FirstOrDefault(u => u.ID == storedApplicantId);
             var resume = new Resume
             {
                 FilePath = filePath,
-                ApplicantID = applicantResult.ID,
+                ImagePath = imagePath,
+                ApplicantID = storedApplicantId,
                 CompanyID = company.ID,
                 JobPositionID = jobId,
-                Applicant = applicantResult,
+                Applicant = applicant,
                 CreatedDate = DateTime.Now,
             };
             _dbContext.Resumes.Add(resume);

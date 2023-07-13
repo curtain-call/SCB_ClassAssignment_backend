@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using resume.Models;
 using resume.Others;
 using resume.ResultModels;
@@ -29,10 +30,10 @@ namespace resume.Services
         }
 
         // Add more methods for querying the Applicants table as needed
-        public async Task<Applicant> CreateApplicantFromDictionary(CombineDictionary data)
+        public async Task<int> CreateApplicantFromDictionary(Dictionary<string, object> data)
         {
-            Dictionary<string, object> basicData = data.BasicResult;
-            Dictionary<string, object> matchData = data.JobMatchResult;
+            // Convert all JObject instances in 'data' to Dictionary<string, object>
+            data = ConvertJObjectsToDictionaries(data);
             var applicant = new Applicant();
             List<SkillCertificate> skillCertificates = new List<SkillCertificate>();
             List<Award> awards = new List<Award>();
@@ -40,13 +41,13 @@ namespace resume.Services
             List<EducationBackground> educationBackground = new List<EducationBackground>();
             var applicantProfile = new ApplicantProfile
             {
-                //TalentTraits = data.ContainsKey("技能") && data["技能"] != null ? data["技能"].ToString() : null,
-                MatchingReason = basicData.ContainsKey("人岗匹配的理由") && basicData["人岗匹配的理由"] != null ? basicData["人岗匹配的理由"].ToString() : null,
-                MatchingScore = basicData.ContainsKey("人岗匹配程度分数") && basicData["人岗匹配程度分数"] != null ? Convert.ToInt32(basicData["人岗匹配程度分数"]) : 0,
-                WorkStability = basicData.ContainsKey("工作稳定性的程度") && basicData["工作稳定性的程度"] != null ? basicData["工作稳定性的程度"].ToString() : null,
-                StabilityReason = basicData.ContainsKey("给出此工作稳定性判断的原因") && basicData["给出此工作稳定性判断的原因"] != null ? basicData["给出此工作稳定性判断的原因"].ToString() : null,
+                //TalentTraits = data.ContainsKey("技能") ? data["技能"].ToString() : null,
+                MatchingReason = data.ContainsKey("人岗匹配的理由") ? data["人岗匹配的理由"].ToString() : null,
+                MatchingScore = data.ContainsKey("人岗匹配程度分数") ? Convert.ToInt32(data["人岗匹配程度分数"]) : 0,
+                WorkStability = data.ContainsKey("工作稳定性的程度") ? data["工作稳定性的程度"].ToString() : null,
+                StabilityReason = data.ContainsKey("给出此工作稳定性判断的原因") ? data["给出此工作稳定性判断的原因"].ToString() : null,
             };
-            foreach (var pair in basicData)
+            foreach (var pair in data)
             {
                 switch (pair.Key)
                 {
@@ -125,38 +126,31 @@ namespace resume.Services
                         if (pair.Value != null)
                         {
                             educationBackground = JsonConvert.DeserializeObject<List<EducationBackground>>(pair.Value.ToString());
-                            foreach (var exp in workExperiences)
+                            foreach (var edu in educationBackground)
                             {
-                                exp.ApplicantID = applicant.ID;
+                                edu.ApplicantID = applicant.ID;
                             }
                         }
                         break;
-                    
+
                     case "个人特性":
                         {
-                            var characteristicsData = (Dictionary<string, object>)pair.Value;
+                            var characteristicsData = pair.Value is JObject jObject ? ConvertJObjectsToDictionaries(jObject.ToObject<Dictionary<string, object>>()) : (Dictionary<string, object>)pair.Value;
                             applicantProfile.PersonalCharacteristics = ExtractPersonalCharacteristics(characteristicsData);
                             break;
                         }
                     case "技能和经验":
                         {
-                            var skillsData = (Dictionary<string, object>)pair.Value;
+                            var skillsData = pair.Value is JObject jObject ? ConvertJObjectsToDictionaries(jObject.ToObject<Dictionary<string, object>>()) : (Dictionary<string, object>)pair.Value;
                             applicantProfile.SkillsAndExperiences = ExtractSkillsAndExperiences(skillsData);
                             break;
                         }
                     case "成就和亮点":
                         {
-                            var achievementsData = (Dictionary<string, object>)pair.Value;
+                            var achievementsData = pair.Value is JObject jObject ? ConvertJObjectsToDictionaries(jObject.ToObject<Dictionary<string, object>>()) : (Dictionary<string, object>)pair.Value;
                             applicantProfile.AchievementsAndHighlights = ExtractAchievementsAndHighlights(achievementsData);
                             break;
                         }
-                }
-            }
-
-            foreach (var pair in matchData)
-            {
-                switch (pair.Key)
-                {
                     case "工作总时间":
                         applicant.TotalWorkYears = pair.Value != null ? Convert.ToInt32(pair.Value) : 0;
                         break;
@@ -173,18 +167,26 @@ namespace resume.Services
                     case "风控专员":
                         // ... (all other job titles)
                         {
-                            var jobMatchData = (Dictionary<string, object>)pair.Value;
-                            var jobMatch = new JobMatch
+                            var jobMatchData = pair.Value as Dictionary<string, object>;
+                            if (jobMatchData != null)
                             {
-                                JobTitle = pair.Key,
-                                Score = (int)jobMatchData["人岗匹配程度分数"],
-                                Reason = (string)jobMatchData["人岗匹配的理由"],
-                            };
-                            applicantProfile.JobMatches.Add(jobMatch);
+                                var jobMatch = new JobMatch
+                                {
+                                    JobTitle = pair.Key,
+                                    Score = jobMatchData.ContainsKey("人岗匹配程度分数") ? Convert.ToInt32(jobMatchData["人岗匹配程度分数"]) : 0,
+                                    Reason = jobMatchData.ContainsKey("人岗匹配的理由") ? (string)jobMatchData["人岗匹配的理由"] : null,
+                                };
+                                if (applicantProfile.JobMatches == null)
+                                {
+                                    applicantProfile.JobMatches = new List<JobMatch>();
+                                }
+                                applicantProfile.JobMatches.Add(jobMatch);
+                            }
                             break;
                         }
                 }
             }
+
             applicant.ApplicantProfile = applicantProfile;
 
             _dbContext.Applicants.Add(applicant);
@@ -220,7 +222,7 @@ namespace resume.Services
 
             await _dbContext.SaveChangesAsync();
 
-            return applicant;
+            return applicant.ID;
         }
 
         public AllSimpleResumeInfoClass ForAllSimpleResumes(int userId)
@@ -254,7 +256,7 @@ namespace resume.Services
                 PhoneNumber = _resume.Applicant.PhoneNumber,
                 JobIntention = _resume.Applicant.JobIntention,
                 Gender = _resume.Applicant.Gender,
-                MatchingScore = _resume.Applicant.ApplicantProfile?.MatchingScore ?? 0
+                //MatchingScore = _resume.Applicant.ApplicantProfile?.MatchingScore ?? 0
             }).ToList();
 
             // 创建AllSimpleResumes对象并返回
@@ -345,14 +347,16 @@ namespace resume.Services
 
             foreach (var pair in data)
             {
-                var characteristicData = (Dictionary<string, object>)pair.Value;
-                var characteristic = new Characteristic
+                if (pair.Value is Dictionary<string, object> characteristicData)
                 {
-                    Name = pair.Key,
-                    Score = characteristicData["分数"] != null ? Convert.ToInt32(pair.Value) : 0,
-                    Reason = characteristicData["原因"].ToString()
-                };
-                characteristics.Add(characteristic);
+                    var characteristic = new Characteristic
+                    {
+                        Name = pair.Key,
+                        Score = characteristicData.ContainsKey("分数") ? Convert.ToInt32(characteristicData["分数"]) : 0,
+                        Reason = characteristicData.ContainsKey("原因") ? characteristicData["原因"].ToString() : null
+                    };
+                    characteristics.Add(characteristic);
+                }
             }
 
             personalCharacteristics.Characteristics = characteristics;
@@ -367,14 +371,16 @@ namespace resume.Services
 
             foreach (var pair in data)
             {
-                var characteristicData = (Dictionary<string, object>)pair.Value;
-                var characteristic = new Characteristic
+                if (pair.Value is Dictionary<string, object> characteristicData)
                 {
-                    Name = pair.Key,
-                    Score = characteristicData["分数"] != null ? Convert.ToInt32(pair.Value) : 0,
-                    Reason = characteristicData["原因"].ToString()
-                };
-                characteristics.Add(characteristic);
+                    var characteristic = new Characteristic
+                    {
+                        Name = pair.Key,
+                        Score = characteristicData.ContainsKey("分数") ? Convert.ToInt32(characteristicData["分数"]) : 0,
+                        Reason = characteristicData.ContainsKey("原因") ? characteristicData["原因"].ToString() : null
+                    };
+                    characteristics.Add(characteristic);
+                }
             }
 
             skillsAndExperiences.Characteristics = characteristics;
@@ -389,20 +395,23 @@ namespace resume.Services
 
             foreach (var pair in data)
             {
-                var characteristicData = (Dictionary<string, object>)pair.Value;
-                var characteristic = new Characteristic
+                if (pair.Value is Dictionary<string, object> characteristicData)
                 {
-                    Name = pair.Key,
-                    Score = characteristicData["分数"] != null ? Convert.ToInt32(pair.Value) : 0,
-                    Reason = characteristicData["原因"].ToString()
-                };
-                characteristics.Add(characteristic);
+                    var characteristic = new Characteristic
+                    {
+                        Name = pair.Key,
+                        Score = characteristicData.ContainsKey("分数") ? Convert.ToInt32(characteristicData["分数"]) : 0,
+                        Reason = characteristicData.ContainsKey("原因") ? characteristicData["原因"].ToString() : null
+                    };
+                    characteristics.Add(characteristic);
+                }
             }
 
             achievementsAndHighlights.Characteristics = characteristics;
 
             return achievementsAndHighlights;
         }
+
 
         public PersonalCharacteristics GetPersonalCharacteristics(int resumeId)
         {
@@ -479,6 +488,25 @@ namespace resume.Services
             }
 
             return new JobMatchScoresInfoForGraphClass { JobMatchScores = jobMatchScores };
+        }
+
+        public Dictionary<string, object> ConvertJObjectsToDictionaries(Dictionary<string, object> data)
+        {
+            var result = new Dictionary<string, object>();
+
+            foreach (var pair in data)
+            {
+                if (pair.Value is Newtonsoft.Json.Linq.JObject jObject)
+                {
+                    result[pair.Key] = ConvertJObjectsToDictionaries(jObject.ToObject<Dictionary<string, object>>());
+                }
+                else
+                {
+                    result[pair.Key] = pair.Value;
+                }
+            }
+
+            return result;
         }
     }
 }

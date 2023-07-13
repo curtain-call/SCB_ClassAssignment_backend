@@ -47,32 +47,42 @@ namespace resume.Services
             return new JobIdResultClass { Id = newJob.ID };
         }
 
-        public JobMatchResultModelClass JobMatchResume(int userId, int jobId) 
+        public JobMatchResultModelClass JobMatchResume(int userId, int jobId)
         {
             var company = _dbContext.Users
-                            .Include(u => u.Company)
-                            .FirstOrDefault(u => u.ID == userId)
-                            ?.Company;
+                                .Include(u => u.Company)
+                                .FirstOrDefault(u => u.ID == userId)
+                                ?.Company;
 
             if (company == null)
             {
                 // 这可能意味着没有找到与userId关联的Company
                 // 在这种情况下，你可能需要返回一个错误信息，而不是继续执行后面的代码
+                return null;
             }
 
             var matches = _dbContext.JobPositions
                                     .Where(jp => jp.CompanyID == company.ID && jp.ID == jobId)
-                                    .SelectMany(jp => jp.Resumes)
-                                    .Select(r => new ResumeMatch
+                                    .Include(jp => jp.Resumes)
+                                        .ThenInclude(r => r.Applicant)
+                                        .ThenInclude(a => a.ApplicantProfile)
+                                        .ThenInclude(ap => ap.JobMatches)
+                                    .SelectMany(jp => jp.Resumes.Select(r => new { Resume = r, JobMatches = r.Applicant.ApplicantProfile.JobMatches }))
+                                    .ToList() // Bring data into memory
+                                    .Select(x => new
                                     {
-                                        ResumeId = r.ID,
-                                        Score = r.Applicant.ApplicantProfile.MatchingScore,
-                                        MatchReason = r.Applicant.ApplicantProfile.MatchingReason
+                                        ResumeId = x.Resume.ID,
+                                        BestMatch = x.JobMatches.OrderByDescending(jm => jm.Score).FirstOrDefault() // Now it's okay to use FirstOrDefault
                                     })
-                                    .OrderByDescending(rm => rm.Score)
-                                    .ToList();
+                                    .Where(x => x.BestMatch != null) // Filter out resumes with no job matches
+                                    .Select(x => new ResumeMatch
+                                    {
+                                        ResumeId = x.ResumeId,
+                                        Score = x.BestMatch.Score,
+                                        MatchReason = x.BestMatch.Reason
+                                    });
 
-            return new JobMatchResultModelClass { Matches = matches };
+            return new JobMatchResultModelClass { Matches = matches.ToList() };
         }
 
         public AllJobInfoResultClass forAllResumeName(int userId)

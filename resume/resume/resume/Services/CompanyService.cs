@@ -39,6 +39,7 @@ namespace resume.Services
                 model.Code = 20000;
                 model.UserId = user.ID;
                 model.Data = user.Role;
+                model.CompanyId = user.CompanyID;
             }
             else
             {

@@ -42,7 +42,7 @@ namespace resume.open
                     string extension = Path.GetExtension(filepath);
         */
 
-        public CombineDictionary analysis(string filepath)
+        public Dictionary<string, object> analysis(string filepath)
         {
 
             Console.OutputEncoding = Encoding.UTF8;
@@ -84,12 +84,8 @@ namespace resume.open
                 Console.Out.Flush();
             }
             Console.Out.Flush();
-            CombineDictsToJson(result1, result2, filepath);//两个字典合为一个json
-            CombineDictionary result = new CombineDictionary()
-            {
-                BasicResult = result1,
-                JobMatchResult = result2,
-            };
+            var result =  CombineDictsToJson(result1, result2, filepath);//两个字典合为一个json
+
 
             Console.Out.Flush();
             Console.WriteLine("生成json文件成功啦");
@@ -117,7 +113,7 @@ namespace resume.open
         }
 
 
-        static void CombineDictsToJson(Dictionary<string, object> dict1, Dictionary<string, object> dict2, string filepath)
+        static Dictionary<string, object> CombineDictsToJson(Dictionary<string, object> dict1, Dictionary<string, object> dict2, string filepath)
         {
             // Combine the two dictionaries
             Dictionary<string, object> combinedData = new Dictionary<string, object>(dict1);
@@ -142,13 +138,13 @@ namespace resume.open
             string combinedJsonFilePath = Path.Combine(jsonFolderPath, combinedJsonFileName);
 
             // Write the combined JSON to a file
-            //File.AppendAllText(combinedJsonFilePath, combinedJson);
             File.WriteAllText(combinedJsonFilePath, combinedJson);
-            Console.Out.Flush();
 
             Console.WriteLine("Combined JSON file created: " + combinedJsonFilePath);
-            Console.Out.Flush();
+
+            return combinedData;
         }
+
 
         private static void getFile(string directoryPath, string fileName, string extension, int n)
         {
