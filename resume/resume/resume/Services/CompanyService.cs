@@ -148,26 +148,32 @@ namespace resume.Services
             // 检查找到的用户是否为空，并获取其公司ID
             var companyId = user != null ? user.CompanyID : 0;
 
-            // 获取过去七天的日期
-            var startDate = DateTime.Now.AddDays(-7);
 
-            // 在这里实现每天新增的岗位以及简历数的逻辑
-            // 返回一个HomeWeeklyState对象
-            // 这是一个示例，你需要根据你的数据库和业务需求修改这里的代码
+            // 获取过去七天的日期列表，包含今天
+            var dateList = Enumerable.Range(0, 7).Select(days => DateTime.Now.AddDays(-days).ToString("yyyy-MM-dd")).ToList();
+
+            var allJobPositions = _dbContext.JobPositions.AsEnumerable().Where(jp => jp.CompanyID == companyId).ToList();
+            var allResumes = _dbContext.Resumes.AsEnumerable().Where(r => r.CompanyID == companyId).ToList();
+
             var weeklyStates = new HomeWeeklyState
             {
-                JobCounts = _dbContext.JobPositions
-                                      .Where(jp => jp.CompanyID == companyId && jp.CreatedDate >= startDate && jp.CreatedDate <= DateTime.Now)
-                                      .GroupBy(jp => jp.CreatedDate.Date)
-                                      .Select(g => new HomeJobCount { Date = g.Key, Count = g.Count() })
-                                      .ToList(),
+                JobCounts = dateList.Select(date => new HomeJobCount
+                {
+                    Date = date,
+                    Count = allJobPositions
+                        .Where(jp => jp.CreatedDate.ToString("yyyy-MM-dd") == date)
+                        .Count()
+                }).ToList(),
 
-                resumeCounts = _dbContext.Resumes
-                                         .Where(r => r.CompanyID == companyId && r.CreatedDate >= startDate && r.CreatedDate <= DateTime.Now)
-                                         .GroupBy(r => r.CreatedDate.Date)
-                                         .Select(g => new HomeResumeCount { Date = g.Key, Count = g.Count() })
-                                         .ToList()
+                resumeCounts = dateList.Select(date => new HomeResumeCount
+                {
+                    Date = date,
+                    Count = allResumes
+                        .Where(r => r.CreatedDate.ToString("yyyy-MM-dd") == date)
+                        .Count()
+                }).ToList(),
             };
+
             return weeklyStates;
         }
 
@@ -194,13 +200,15 @@ namespace resume.Services
         private List<JobResumeCount> GetJobResumeCounts(Company company)
         {
             // 这里编写获取岗位对应的简历数量的代码
-            var jobResumeCounts = company.JobPositions
-                                         .Select(jp => new JobResumeCount
-                                         {
-                                             JobName = jp.Title,
-                                             ResumeCount = jp.Resumes.Count
-                                         })
-                                         .ToList();
+            var jobResumeCounts = _dbContext.JobPositions
+                                            .Where(jp => jp.CompanyID == company.ID)
+                                            .Select(jp => new JobResumeCount
+                                            {
+                                                JobName = jp.Title,
+                                                ResumeCount = _dbContext.Resumes.Count(r => r.JobPositionID == jp.ID)
+                                            })
+                                            .ToList();
+
 
             return jobResumeCounts;
         }
@@ -282,13 +290,13 @@ namespace resume.Services
             if (company == null)
             {
                 // 如果找不到对应的公司，返回错误信息
-                return new AllUserResultClass { Users = new List<ResultModels.User>() };
+                return new AllUserResultClass { Users = new List<ResultModels.BriefUser>() };
             }
 
             // 获取该公司下所有用户的信息
             var users = _dbContext.Users
                                   .Where(u => u.CompanyID == company.ID)
-                                  .Select(u => new ResultModels.User { Id = u.ID, Account = u.Account, Role = u.Role })
+                                  .Select(u => new ResultModels.BriefUser { Id = u.ID, Account = u.Account, Role = u.Role })
                                   .ToList();
 
             return new AllUserResultClass { Users = users };    

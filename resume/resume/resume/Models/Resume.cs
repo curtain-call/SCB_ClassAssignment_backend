@@ -8,7 +8,7 @@
         public int CompanyID { get; set; } // 新增的CompanyID属性
         public string? Content { get; set; }
         public string? FilePath { get; set; }
-
+        public string? ImagePath { get; set; }
         public DateTime CreatedDate { get; set; }  // 新增的CreatedDate属性
 
         // 导航属性

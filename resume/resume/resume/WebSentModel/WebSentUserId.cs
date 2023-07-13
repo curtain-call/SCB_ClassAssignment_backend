@@ -4,4 +4,9 @@
     {
         public int Id { get; set; }
     }
+
+    public class WebSentResumeId
+    {
+        public int Id { get; set; }
+    }
 }

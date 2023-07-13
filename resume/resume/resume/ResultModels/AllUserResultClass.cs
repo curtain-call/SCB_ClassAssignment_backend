@@ -1,6 +1,6 @@
 ﻿namespace resume.ResultModels
 {
-    public class User
+    public class BriefUser
     {
         public int Id { get; set; }
         public string Account { get; set; }
@@ -10,7 +10,7 @@
 
     public class AllUserResultClass
     {
-        public List<User> Users { get; set; }
+        public List<BriefUser> Users { get; set; }
 
     }
 }

@@ -19,6 +19,7 @@ builder.Services.AddDbContext<MyDbContext>(options =>
 builder.Services.AddTransient<CompanyService>();
 builder.Services.AddTransient<ApplicantService>();
 builder.Services.AddTransient<ResumeService>();
+builder.Services.AddTransient<JobService>();
 
 var app = builder.Build();
 

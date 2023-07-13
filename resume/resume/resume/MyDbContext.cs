@@ -18,6 +18,7 @@ public class MyDbContext : DbContext
     public DbSet<SkillCertificate> SkillCertificates { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<EducationBackground> EducationBackgrounds { get; set; }
+    public DbSet<Characteristic> Characteristics { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -74,5 +75,7 @@ public class MyDbContext : DbContext
         modelBuilder.Entity<User>()
         .HasIndex(u => u.Account)
         .IsUnique();
+
+      
     }
 }

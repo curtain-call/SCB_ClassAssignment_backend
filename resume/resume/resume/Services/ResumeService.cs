@@ -69,17 +69,32 @@ namespace resume.Service
             }
         }*/
 
-        public int AddResumePath(string filePath, Applicant applicantResult, int companyID)
+        public int AddResumePath(string filePath, Applicant applicantResult, int userId, int jobId)
         {
+            var company = _dbContext.Users
+                                   .Include(u => u.Company)
+                                   .FirstOrDefault(u => u.ID == userId)
+                                   ?.Company;
             var resume = new Resume
             {
                 FilePath = filePath,
                 ApplicantID = applicantResult.ID,
-                CompanyID = companyID,
-                JobPositionID = 1,
+                CompanyID = company.ID,
+                JobPositionID = jobId,
                 Applicant = applicantResult,
+                CreatedDate = DateTime.Now,
             };
             _dbContext.Resumes.Add(resume);
+            _dbContext.SaveChanges();
+            // 关联Resume和JobPosition
+            var jobPosition = _dbContext.JobPositions.Include(jp => jp.Resumes)
+                                                     .FirstOrDefault(jp => jp.ID == resume.JobPositionID);
+            if (jobPosition == null)
+            {
+                throw new Exception("JobPosition not found");
+            }
+            jobPosition.Resumes.Add(resume);
+            // 最后保存这些修改
             _dbContext.SaveChanges();
             Console.WriteLine("内" + resume.ID);
             return resume.ID;
@@ -93,6 +108,17 @@ namespace resume.Service
             if (existingResume != null)
             {
                 return existingResume.FilePath;
+            }
+            return "";
+        }
+        public string GetImagePathById(int resumeID)
+        {
+            var existingResume = _dbContext.Resumes
+            .FirstOrDefault(r => r.ID == resumeID);
+
+            if (existingResume != null)
+            {
+                return existingResume.ImagePath;
             }
             return "";
         }
@@ -314,19 +340,19 @@ namespace resume.Service
                 var workStability = resume.Applicant.ApplicantProfile.WorkStability;
                 switch (workStability)
                 {
-                    case "Low":
+                    case "低":
                         workStabilityCounts.Low++;
                         break;
-                    case "MediumLow":
+                    case "中下":
                         workStabilityCounts.MediumLow++;
                         break;
-                    case "Medium":
+                    case "中":
                         workStabilityCounts.Medium++;
                         break;
-                    case "MediumHigh":
+                    case "中上":
                         workStabilityCounts.MediumHigh++;
                         break;
-                    case "High":
+                    case "高":
                         workStabilityCounts.High++;
                         break;
                     default:
@@ -382,6 +408,25 @@ namespace resume.Service
             };
 
             return result;
+        }
+
+        public ICollection<JobMatch> GetJobMatchesByResumeId(int resumeId)
+        {
+            // 首先，我们需要找到与给定resumeId对应的Applicant
+            var applicant = _dbContext.Resumes
+                                      .Include(r => r.Applicant)
+                                      .ThenInclude(a => a.ApplicantProfile)
+                                      .ThenInclude(ap => ap.JobMatches)
+                                      .FirstOrDefault(r => r.ID == resumeId)?.Applicant;
+
+            // 如果找不到applicant或者其对应的ApplicantProfile，我们返回一个空的列表
+            if (applicant == null || applicant.ApplicantProfile == null)
+            {
+                return new List<JobMatch>();
+            }
+
+            // 最后，返回applicantProfile的JobMatches
+            return applicant.ApplicantProfile.JobMatches;
         }
 
     }

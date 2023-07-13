@@ -8,6 +8,7 @@ using resume.Services;
 using resume.Models;
 using resume.Service;
 using resume.open;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace resume.Controllers
 {
@@ -39,9 +40,7 @@ namespace resume.Controllers
             return result;
         }
 
-
-
-        /*[HttpPost("upload")]
+        [HttpPost("upload")]
         public FirstAddResumeModelClass UploadResume(IFormFile file, int jobId, int UserId)
         {
 
@@ -70,40 +69,59 @@ namespace resume.Controllers
             using var fileStream = new FileStream(filePath, FileMode.Create);
             //将该网络传来的文件，全部都赋值给那个新建的文件
             file.CopyTo(fileStream);
-
+            Console.WriteLine(filePath);
             //接下来就是调用算法分析简历，返回对应的简历信息
             Connect connect = new Connect();
-            Dictionary<string, object> resumeInfo = connect.analysis(filePath);
-            Console.WriteLine(resumeInfo);
-            //Console.WriteLine("#############################################################");
-            *//*foreach (KeyValuePair<string, object> kvp in resumeInfo) {
-                Console.WriteLine("key = {0}:value{1}", kvp.Key, kvp.Value);
-
-            }*//*
-            //Console.WriteLine("=====================");
-            //传入参数：filepath 返回：FirstAddResumeModelClass 并实现将该路径存入数据库
+            var resumeInfo = connect.analysis(filePath);
+            //string filePathTest = @"D:\visualStudio workspace\SCB_ClassAssignment_backend\end\word\1.docx";
+            //Dictionary<string, object> resumeInfo = connect.analysis(filePathTest);
+            Console.WriteLine(resumeInfo);  
+ 
             var storedApplicant = _applicantService.CreateApplicantFromDictionary(resumeInfo);
             Applicant applicantResult = storedApplicant.Result;
-            int resumeID = _resumeService.AddResumePath(filePath, applicantResult, userId);
-            var simpleResume = new SimpleResume
+            int resumeID = _resumeService.AddResumePath(filePath, applicantResult, UserId, jobId);
+            var detailedResume = new DetailedResume
             {
-                Rid = resumeID,
-                Name = applicantResult.Name,
+                Id = applicantResult.ID,
                 Age = applicantResult.Age,
-                HighestEducation = applicantResult.HighestEducation,
+                Name = applicantResult.Name,
+                Email = applicantResult.Email,
                 PhoneNumber = applicantResult.PhoneNumber,
                 JobIntention = applicantResult.JobIntention,
                 Gender = applicantResult.Gender,
+                SelfEvaluation = applicantResult.SelfEvaluation,
+                HighestEducation = applicantResult.HighestEducation,
+                //TalentTraits = applicantResult.ApplicantProfile.TalentTraits,
+                Awards = applicantResult.Awards?.Select(a => new AwardInfo { AwardName = a.AwardName }).ToList() ?? new List<AwardInfo>(), // assign Awards
+                WorkExperience = applicantResult.WorkExperiences?.ToList() ?? new List<WorkExperience>(),  // assign WorkExperiences
+                SkillCertificate = applicantResult.SkillCertificates?.ToList() ?? new List<SkillCertificate>(),  // assign SkillCertificates
+                WorkStability = applicantResult.ApplicantProfile.WorkStability,
+                WorkStabilityReason = applicantResult.ApplicantProfile.StabilityReason,
                 MatchingScore = applicantResult.ApplicantProfile.MatchingScore,
+                MatchingReason = applicantResult.ApplicantProfile.MatchingReason,
+                EducationBackgrounds = applicantResult.EducationBackgrounds?.ToList() ?? new List<EducationBackground>()
             };
+            var result = new FirstAddResumeModelClass() { 
+                Code = 20000,
+                DetailedResume = detailedResume
+            };  
+            return result;
+        }
 
-            ResumeId resumeId = new ResumeId();
-            resumeId.Rid = resumeID;
+        [HttpGet("getGraph")]
+        public IActionResult GetFile(int resumeId)
+        {
+            Console.WriteLine(resumeId);
+            string imagePath = _resumeService.GetImagePathById(resumeId);
+            //string filePath = "C:\\Users\\86178\\Desktop\\大学本科学习资料\\大二下\\中国软件杯\\resume\\resume\\Resumes\\2023\\7\\11\\C5C5FA6B19833453071A6E76E1836D835D555FFF13388E450DCA7FE55F82040E.jpg"; // 文件路径
+            //
+            FileStream fileStream = new FileStream(imagePath, FileMode.Open);
 
-            return new FirstAddResumeModelClass();
-        }*/
+            string mimeType;
+            new FileExtensionContentTypeProvider().TryGetContentType(imagePath, out mimeType); // 获取文件的MIME类型
 
-
+            return new FileStreamResult(fileStream, mimeType); // 设置 MIME 类型为二进制流
+        }
 
         /// 修改简历（左右两侧，左侧简历，右侧修改确认）
         [HttpPost("SecondUpload")]
@@ -134,7 +152,6 @@ namespace resume.Controllers
             return result;
         
         }
-
 
         /// <summary>
         /// 展示的是一个简历的所有详细信息
@@ -194,7 +211,6 @@ namespace resume.Controllers
             return result;
         }
 
-
         /// <summary>
         /// 工作年限：0，1，2，3，4，5，6···14，15，15以上（大数据量柱图）
         /// </summary>
@@ -233,9 +249,40 @@ namespace resume.Controllers
         {
             int id = webSentUserId.Id;
             //此时查数据库，查出该用户所在公司的所有简历分数排布
-
-            return new JobMatchScoresInfoForGraphClass() { };
+            var result = _applicantService.JobMatchScoresInfoForGraph(webSentUserId.Id);
+            return result;
         }
+
+        [HttpPost("graph/PersonalJobMatchScore")]
+        public ICollection<JobMatch> GetJobMatches(WebSentResumeId webSentResumeId)
+        {
+            var result = _resumeService.GetJobMatchesByResumeId(webSentResumeId.Id);
+            return result;
+        }
+
+        //简历详情页可以获得这个人的匹配分数
+        [HttpPost("graph/PersonalCharacteristics")]
+        public PersonalCharacteristics GetPersonalCharacteristics(WebSentResumeId webSentResumeId)
+        {
+            var result = _applicantService.GetPersonalCharacteristics(webSentResumeId.Id);
+            return result;
+        }
+
+        [HttpPost("graph/SkillsAndExperiences")]
+        public SkillsAndExperiences GetSkillsAndExperiences(WebSentResumeId webSentResumeId)
+        {
+            var result = _applicantService.GetSkillsAndExperiences(webSentResumeId.Id);
+            return result;
+        }
+
+        [HttpPost("graph/AchievementsAndHighlights")]
+        public AchievementsAndHighlights GetAchievementsAndHighlights(WebSentResumeId webSentResumeId)
+        {
+            var result = _applicantService.GetAchievementsAndHighlights(webSentResumeId.Id);
+            return result;
+        }
+
+
 
     }
 }

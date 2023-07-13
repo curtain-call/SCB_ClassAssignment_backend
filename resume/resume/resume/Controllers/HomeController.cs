@@ -11,7 +11,7 @@ namespace resume.Controllers
     {
         private readonly CompanyService _companyService;
         public HomeController(CompanyService companyService)
-        {
+        { 
             _companyService = companyService;
         }
 
