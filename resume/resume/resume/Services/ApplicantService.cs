@@ -150,7 +150,7 @@ namespace resume.Services
                             var achievementsData = pair.Value is JObject jObject ? ConvertJObjectsToDictionaries(jObject.ToObject<Dictionary<string, object>>()) : (Dictionary<string, object>)pair.Value;
                             applicantProfile.AchievementsAndHighlights = ExtractAchievementsAndHighlights(achievementsData);
                             break;
-                        }
+                        }   
                     case "工作总时间":
                         applicant.TotalWorkYears = pair.Value != null ? Convert.ToInt32(pair.Value) : 0;
                         break;
@@ -415,9 +415,11 @@ namespace resume.Services
 
         public PersonalCharacteristics GetPersonalCharacteristics(int resumeId)
         {
-            var applicant = _dbContext.Applicants.Include(a => a.ApplicantProfile)
-                                       .ThenInclude(ap => ap.PersonalCharacteristics)
-                                       .FirstOrDefault(a => a.ID == resumeId);
+            var applicant = _dbContext.Applicants
+                          .Include(a => a.ApplicantProfile)
+                          .ThenInclude(ap => ap.PersonalCharacteristics)
+                          .ThenInclude(pc => pc.Characteristics)
+                          .FirstOrDefault(a => a.ID == resumeId);
             if (applicant == null || applicant.ApplicantProfile == null)
             {
                 throw new Exception("Applicant or ApplicantProfile not found");
@@ -429,7 +431,8 @@ namespace resume.Services
         public SkillsAndExperiences GetSkillsAndExperiences(int resumeId)
         {
             var applicant = _dbContext.Applicants.Include(a => a.ApplicantProfile)
-                                       .ThenInclude(ap => ap.PersonalCharacteristics)
+                                       .ThenInclude(ap => ap.SkillsAndExperiences)
+                                       .ThenInclude(pc => pc.Characteristics)
                                        .FirstOrDefault(a => a.ID == resumeId);
             if (applicant == null || applicant.ApplicantProfile == null)
             {
@@ -438,10 +441,12 @@ namespace resume.Services
 
             return applicant.ApplicantProfile.SkillsAndExperiences;
         }
+
         public AchievementsAndHighlights GetAchievementsAndHighlights(int resumeId)
         {
             var applicant = _dbContext.Applicants.Include(a => a.ApplicantProfile)
-                                       .ThenInclude(ap => ap.PersonalCharacteristics)
+                                       .ThenInclude(ap => ap.AchievementsAndHighlights)
+                                       .ThenInclude(pc => pc.Characteristics)
                                        .FirstOrDefault(a => a.ID == resumeId);
             if (applicant == null || applicant.ApplicantProfile == null)
             {
